@@ -4,6 +4,7 @@ var root = __base + 'core/frameworks/uikit/',
 require(root + 'shim/Object.prototype.watch');
     
 var View = require(root + 'views/view'),
+    BarButton = require(root + 'views/barButton'),
     Label = require(root + 'views/label'),
     NavigationBar = require(root + 'views/navigationBar');
 
@@ -13,6 +14,7 @@ module.exports = {
 	name: 'uikit',
     Model: Model,
     View: View,
+    BarButton: BarButton,
     Label: Label,
     NavigationBar: NavigationBar,
     ViewController: ViewController

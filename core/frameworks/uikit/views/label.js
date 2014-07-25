@@ -5,6 +5,7 @@ var util = require('util'),
 var _initStyle = function (self) {
     self.element.style.backgroundColor = 'transparent';
     self.element.style.display = 'table';
+    self.element.style.pointerEvents = 'none';
 };
 
 var _text = function () {
@@ -12,6 +13,7 @@ var _text = function () {
     var el = document.createElement('p');
     el.style.display = 'table-cell';
     el.style.height = '100%';
+    el.style.pointerEvents = 'none';
     return el;
 };
 
@@ -22,10 +24,10 @@ function Label() {
     this.textElement = _text();
     this.element.appendChild(this.textElement);
     
-    this.text = '';
-    this.textColor = '';
-    this.textAlign = '';
-    this.textVerticalAlign = '';
+    this.text = null;
+    this.textColor = null;
+    this.textAlign = null;
+    this.textVerticalAlign = null;
     
     this.watch('text', this.setText);
     this.watch('textColor', this.setTextColor);

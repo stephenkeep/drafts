@@ -11,28 +11,23 @@ var element = function () {
 function View() {
     this.element = element();
     this.name = 'view';
-    this.styles = {
-        'backgroundColor': 'background-color',
-        'float': 'float',
-        'height': 'height',
-        'width': 'width'
-        
-    };
+    
+    this.width = null;
+    this.height = null;
+    this.float = null;
+    this.backgroundColor = null;
+    
+    this.watch('width', this.setProperty);
+    this.watch('height', this.setProperty);
+    this.watch('float', this.setProperty);
+    this.watch('backgroundColor', this.setProperty);
 }
 
+View.prototype.setProperty = function (property, oldValue, newValue) {
+    this.element.style[property] = newValue;
+};
+
 View.prototype.appendChild = function (child) {
-    
-    var styles = Object.keys(this.styles);
-    
-    console.log(styles);
-    
-    //set the styles
-    for (var i = 0, l = styles.length; i < l; i++) {
-        var style = styles[i];
-        if (child[style]) {
-            child.element.style[this.styles[style]] = child[style];
-        }
-    }
     
     this.element.appendChild(child.element);
 };
