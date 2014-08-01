@@ -7,21 +7,15 @@ var _initStyle = function (self) {
     self.element.style.maxHeight = '48px';
     self.element.style.minHeight = '48px';
     self.element.style.minWidth = '48px';
-};
-
-var _mouseOver = function () {
-    console.log(this.iconColor);
-    console.log('boom!');
-};
-
-var _mouseOut = function () {
-    
+    self.element.style.pointerEvents = 'fill';
 };
 
 function BarButton() {
+    var self = this;
     View.apply(this, arguments);
     _initStyle(this);
-    
+
+    //SETUP INHERITED PROPERTIES
     this.float = 'left';
     this.height = '48px';
     this.width = '48px';
@@ -29,35 +23,59 @@ function BarButton() {
     this.titleLabel = new Label();
     this.titleLabel.textElement.style.font = 'font-family: "icons"';
     this.titleLabel.textAlign = 'center';
-    this.titleLabel.textVerticalAlign = 'middle';
+    this.titleLabel.textVerticalAlign = 'center';
     this.appendChild(this.titleLabel);
     
-    this.onClick = null;
-    this.icon = null;
-    this.iconColor = null;
+    //CUSTOM MOUSE EVENTS
+    this.element.onmouseover = function () {
+        var _backgroundColor = self.backgroundColor,
+            _iconColor = self.iconColor;
+        self.backgroundColor = _iconColor;
+        self.iconColor = _backgroundColor;
+    };
+    this.element.onmouseout = function () {
+        var _backgroundColor = self.backgroundColor,
+            _iconColor = self.iconColor;
+        self.backgroundColor = _iconColor;
+        self.iconColor = _backgroundColor;
+    };
     
-    this.watch('icon', this.setIcon);
-    this.watch('iconColor', this.setIconColor);
-    this.watch('onClick', this.setOnClick);
+    //CUSTOM PROPERTIES
+    var onClick,
+        icon,
+        iconColor;
+        
+    Object.defineProperty(this, 'onClick', {
+        get: function() {
+          return onClick;
+        },
+        set: function(newValue) {
+           onClick = newValue;
+           this.element.onclick = newValue;
+        }
+    });
     
-    this.element.onmouseover = _mouseOver;
-    this.element.onmouseout = _mouseOut;
+    Object.defineProperty(this, 'icon', {
+        get: function() {
+          return icon;
+        },
+        set: function(newValue) {
+           icon = newValue;
+           this.titleLabel.textElement.className = 'icon-' + newValue;
+        }
+    });
+    
+    Object.defineProperty(this, 'iconColor', {
+        get: function() {
+          return iconColor;
+        },
+        set: function(newValue) {
+           iconColor = newValue;
+           this.titleLabel.textColor = newValue;
+        }
+    });
 }
 
 util.inherits(BarButton, View);
-
-BarButton.prototype.setOnClick = function (property, oldValue, newValue) {
-    this.element.onclick = newValue;
-};
-
-BarButton.prototype.setIcon = function (property, oldValue, newValue) {
-    this.titleLabel.textElement.className = 'icon-' + newValue;
-};
-
-BarButton.prototype.setIconColor = function (property, oldValue, newValue) {
-    console.log(newValue);
-    this.titleLabel.textColor = newValue;
-};
-
 
 module.exports = BarButton;

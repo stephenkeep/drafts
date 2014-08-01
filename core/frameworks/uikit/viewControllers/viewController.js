@@ -4,6 +4,7 @@ var root = __base + 'core/frameworks/uikit/',
 function ViewController() {
     this.name = 'viewController';
     this.view = new View();
+    this.view.parentViewController = this;
 }
 
 module.exports = ViewController;

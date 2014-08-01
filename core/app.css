@@ -1,4 +1,6 @@
-
+* {
+    pointer-events: 'none';
+}
 
 html{
     height: 100%;
@@ -173,9 +175,7 @@ header ul a strong {
 }
 
 section {
-  width:500px;
-  float:right;
-  padding-bottom:50px;
+    height: 100%;
 }
 
 small {
@@ -202,4 +202,24 @@ div {
     width: 100%;
     height: 100%;
     background-color: white;
+    overflow: hidden;
+    position: relative;
+    outline: none;
+}
+
+::-webkit-scrollbar {
+    width: 7px;
+}
+
+::-webkit-scrollbar-track {
+  visibility: hidden; /* doesn't seem to work */
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background: rgba(0,0,0,0.5);
+}
+
+::-webkit-scrollbar:window-inactive {
+    visibility: hidden;
 }

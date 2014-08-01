@@ -1,15 +1,13 @@
-var _ = require('lodash');
-
-module.exports = {
-    name: 'app',
-    view: document.body,
-    extend: function(child) {
-		return _.extend({}, this, child);
-	},
-    appWillFinishLaunching: function () {
-        this.appDidFinishLauncing();
-    },
-    setRootViewController: function (rootViewController) {
-        this.view.appendChild(rootViewController.view.element);
-    }
+var App = function () {
+    this.view = document.body;
 };
+
+App.prototype.appWillFinishLaunching = function () {
+    this.appDidFinishLauncing();
+};
+
+App.prototype.setRootViewController = function (rootViewController) {
+    this.view.appendChild(rootViewController.view.element);
+};
+
+module.exports = App;

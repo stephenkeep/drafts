@@ -1,5 +1,7 @@
 global.__base = __dirname + '/';
 global.document = window.document;
 
-var app = require('./app/app.js');
+var App = require('./app/app.js'),
+    app = new App();
+
 app.appWillFinishLaunching();

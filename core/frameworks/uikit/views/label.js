@@ -4,16 +4,21 @@ var util = require('util'),
 
 var _initStyle = function (self) {
     self.element.style.backgroundColor = 'transparent';
-    self.element.style.display = 'table';
+    self.element.style.display = 'block';
     self.element.style.pointerEvents = 'none';
+    self.element.style.position = 'absolute';
+    self.element.style.top = '0';
+    self.element.style.left = '0';
 };
 
 var _text = function () {
     
     var el = document.createElement('p');
-    el.style.display = 'table-cell';
     el.style.height = '100%';
-    el.style.pointerEvents = 'none';
+    el.style.textOverflow = 'ellipsis';
+    el.style.display = '-webkit-box';
+    el.style['-webkit-line-clamp'] = '1';
+    el.style['-webkit-box-orient'] = 'vertical';
     return el;
 };
 
@@ -24,33 +29,87 @@ function Label() {
     this.textElement = _text();
     this.element.appendChild(this.textElement);
     
-    this.text = null;
-    this.textColor = null;
-    this.textAlign = null;
-    this.textVerticalAlign = null;
+    var top,
+        left,
+        text,
+        textColor,
+        textAlign,
+        numberOfLines,
+        textVerticalAlign = null;
     
-    this.watch('text', this.setText);
-    this.watch('textColor', this.setTextColor);
-    this.watch('textAlign', this.setTextAlign);
-    this.watch('textVerticalAlign', this.setTextVerticalAlign);
+    Object.defineProperty(this, 'top', {
+        get: function() {
+          return top;
+        },
+        set: function(newValue) {
+           top = newValue;
+           this.element.style.top = newValue;
+        }
+    });
+    
+    Object.defineProperty(this, 'left', {
+        get: function() {
+          return left;
+        },
+        set: function(newValue) {
+           left = newValue;
+           this.element.style.left = newValue;
+           this.width = '-webkit-calc(100% - ' + newValue + ' - ' + newValue + ')';
+        }
+    });
+    
+    Object.defineProperty(this, 'text', {
+        get: function() {
+          return text;
+        },
+        set: function(newValue) {
+           text = newValue;
+           this.textElement.innerHTML = newValue;
+        }
+    });
+    
+    Object.defineProperty(this, 'textColor', {
+        get: function() {
+          return textColor;
+        },
+        set: function(newValue) {
+           textColor = newValue;
+           this.textElement.style.color = newValue;
+        }
+    });
+    
+    Object.defineProperty(this, 'textAlign', {
+        get: function() {
+          return textAlign;
+        },
+        set: function(newValue) {
+           textAlign = newValue;
+           this.textElement.style.textAlign = newValue;
+        }
+    });
+    
+    Object.defineProperty(this, 'textVerticalAlign', {
+        get: function() {
+          return textVerticalAlign;
+        },
+        set: function(newValue) {
+            textVerticalAlign = newValue;
+            this.textElement.style['-webkit-box-pack'] = newValue;
+        }
+    });
+    
+    Object.defineProperty(this, 'numberOfLines', {
+        get: function() {
+          return numberOfLines;
+        },
+        set: function(newValue) {
+           numberOfLines = newValue;
+           this.textElement.style['-webkit-line-clamp'] = newValue;
+        }
+    });
 }
 
 util.inherits(Label, View);
 
-Label.prototype.setText = function (property, oldValue, newValue) {
-    this.textElement.innerHTML = newValue;
-};
-
-Label.prototype.setTextColor = function (property, oldValue, newValue) {
-    this.textElement.style.color = newValue;
-};
-
-Label.prototype.setTextAlign = function (property, oldValue, newValue) {
-    this.textElement.style.textAlign = newValue;
-};
-
-Label.prototype.setTextVerticalAlign = function (property, oldValue, newValue) {
-    this.textElement.style.verticalAlign = newValue;
-};
 
 module.exports = Label;

@@ -1,4 +1,16 @@
 {
-  "name": "drafts",
-  "main": "index.html"
+  "main": "index.html",
+  "name": "skeep",
+  "nodejs": true,
+  "window": {
+    "toolbar": true,
+    "frame": true,
+    "width": 800,
+    "height": 600,
+    "position": "mouse",
+    "min_width": 400,
+    "min_height": 200,
+    "max_width": 8000,
+    "max_height": 8000
+  }
 }

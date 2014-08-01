@@ -4,9 +4,10 @@ var util = require('util'),
     Label = require(root + 'views/label');
 
 var _initStyle = function (self) {
-    self.element.style.borderBottom = '1px solid rgba(0,0,0,0.1)';
+    self.element.style.outline = '1px solid rgba(0,0,0,0.1)';
     self.element.style.maxHeight = '48px';
     self.element.style.position = 'relative';
+    self.element.style.zIndex = '1000';
 };
 
 function NavigationBar() {
@@ -20,33 +21,46 @@ function NavigationBar() {
     this.titleLabel.element.style.top = '0';
     this.titleLabel.element.style.left = '0';
     this.titleLabel.textAlign = 'center';
-    this.titleLabel.textVerticalAlign = 'middle';
+    this.titleLabel.textVerticalAlign = 'center';
     this.appendChild(this.titleLabel);
 
-    this.title = null;
-    this.leftBarButton = null;
-    this.rightBarButton = null;
+    var title,
+        leftBarButton,
+        rightBarButton;
     
-    this.watch('title', this.setTitle);
-    this.watch('leftBarButton', this.setLeftBarButton);
-    this.watch('rightBarButton', this.setRightBarButton);
+    Object.defineProperty(this, 'title', {
+        get: function() {
+          return title;
+        },
+        set: function(newValue) {
+           title = newValue;
+           this.titleLabel.text = newValue;
+        }
+    });
+    
+    Object.defineProperty(this, 'leftBarButton', {
+        get: function() {
+          return leftBarButton;
+        },
+        set: function(newValue) {
+           leftBarButton = newValue;
+           this.appendChild(newValue);
+        }
+    });
+    
+    Object.defineProperty(this, 'rightBarButton', {
+        get: function() {
+          return rightBarButton;
+        },
+        set: function(newValue) {
+            rightBarButton = newValue;
+            rightBarButton.float = 'right';
+            this.appendChild(rightBarButton);
+        }
+    });
 }
 
 util.inherits(NavigationBar, View);
-
-NavigationBar.prototype.setTitle = function (property, oldValue, newValue) {
-    this.titleLabel.text = newValue;
-};
-
-NavigationBar.prototype.setLeftBarButton = function (property, oldValue, newValue) {
-    this.appendChild(newValue);
-};
-
-NavigationBar.prototype.setRightBarButton = function (property, oldValue, newValue) {
-    var rightBarButton = newValue;
-    rightBarButton.float = 'right';
-    this.appendChild(rightBarButton);
-};
 
 
 module.exports = NavigationBar;

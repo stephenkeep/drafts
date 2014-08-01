@@ -1,20 +1,35 @@
-var App = require(__base + 'core/app'),
-    RootViewController = require(__base + 'app/viewControllers/composeViewControllers/controllers/rootViewController'),
-    ArticleListViewController = require(__base + 'app/viewControllers/composeViewControllers/controllers/articleListViewController'),
-    ComposeViewController = require(__base + 'app/viewControllers/composeViewControllers/controllers/composeViewController');
+var util = require('util'),
+    App = require(__base + 'core/app'),
+    UI = require(__base + 'core/frameworks/uikit'),
+    RootViewController = require(__base + 'app/viewControllers/compose/controllers/rootViewController'),
+    DocumentListViewController = require(__base + 'app/viewControllers/compose/controllers/documentListViewController'),
+    ComposeViewController = require(__base + 'app/viewControllers/compose/controllers/composeViewController');
 
-module.exports = App.extend({
-    appDidFinishLauncing: function () {
-        console.log('applicationDidFinishLaunching');
-        
-        
-        var rootViewController = new RootViewController(),
-            articleListViewController = new ArticleListViewController(),
-            composeViewController = new ComposeViewController();
-        
-        rootViewController.setLeftViewController(articleListViewController);
-        rootViewController.setRightViewController(composeViewController);
+function app() {
+    App.apply(this, arguments);
+}
 
-        this.setRootViewController(rootViewController);
-    }
-});
+util.inherits(app, App);
+
+app.prototype.appDidFinishLauncing = function () {
+    console.log('applicationDidFinishLaunching');
+    
+    var rootViewController = new RootViewController(),
+        documentListViewController = new DocumentListViewController(),
+        composeViewController = new ComposeViewController(),
+        navigationViewController = new UI.NavigationViewController();
+    
+    navigationViewController.setRootViewController(documentListViewController);
+
+    //set split screen widths
+    navigationViewController.view.width = '280px';
+    composeViewController.view.width = '-webkit-calc(100% - 280px)';
+    
+    rootViewController.setLeftViewController(navigationViewController);
+    rootViewController.setRightViewController(composeViewController);
+
+    this.setRootViewController(rootViewController);
+};
+
+
+module.exports = app;
