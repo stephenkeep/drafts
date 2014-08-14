@@ -3,17 +3,20 @@ var util = require('util'),
     View = require(root + 'views/view'),
     Label = require(root + 'views/label');
 
-var _initStyle = function (self) {
-    self.element.style.maxHeight = '48px';
-    self.element.style.minHeight = '48px';
-    self.element.style.minWidth = '48px';
-    self.element.style.pointerEvents = 'fill';
+var element = function () {
+    
+    var el = document.createElement('ui-barbutton');
+    el.style.maxHeight = '48px';
+    el.style.minHeight = '48px';
+    el.style.minWidth = '48px';
+    el.style.pointerEvents = 'fill';
+    return el;
 };
 
 function BarButton() {
     var self = this;
     View.apply(this, arguments);
-    _initStyle(this);
+    this.element = element();
 
     //SETUP INHERITED PROPERTIES
     this.float = 'left';

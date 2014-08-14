@@ -10,13 +10,15 @@ function CollectionViewController() {
     
     this.loadData = function () {
     
-        if (!this.cellForIndex) {
+        if (!self.delegate || !self.delegate.cellForIndex) {
             return;
         }
+        
+        this.view.empty();
 
         for (var i = 0, l = this.rows; i < l; i++) {
 
-            var cell = this.cellForIndex(i);
+            var cell = self.delegate.cellForIndex(self, i);
             cell.index = i;
             cell.onClick = _didPressCellAtIndex;
 
@@ -33,8 +35,8 @@ function CollectionViewController() {
         this.selectedCell = cell;
         this.selectedCell.selected = true;
         
-        if (self.didPressCellAtIndex) {
-            self.didPressCellAtIndex(cell, index);
+        if (self.delegate && self.delegate.didPressCellAtIndex) {
+            self.delegate.didPressCellAtIndex(self, cell, index);
         } else {
             console.error('didPressCellAtIndex not found');
         }

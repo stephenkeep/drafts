@@ -1,9 +1,9 @@
 var util = require('util'),
     App = require(__base + 'core/app'),
     UI = require(__base + 'core/frameworks/uikit'),
-    RootViewController = require(__base + 'app/viewControllers/compose/controllers/rootViewController'),
-    DocumentListViewController = require(__base + 'app/viewControllers/compose/controllers/documentListViewController'),
-    ComposeViewController = require(__base + 'app/viewControllers/compose/controllers/composeViewController');
+    PageViewController = require(__base + 'app/viewControllers/pages/pageViewController'),
+    PostListViewController = require(__base + 'app/viewControllers/posts/postListViewController'),
+    ComposeViewController = require(__base + 'app/viewControllers/posts/composeViewController');
 
 function app() {
     App.apply(this, arguments);
@@ -14,22 +14,38 @@ util.inherits(app, App);
 app.prototype.appDidFinishLauncing = function () {
     console.log('applicationDidFinishLaunching');
     
-    var rootViewController = new RootViewController(),
-        documentListViewController = new DocumentListViewController(),
+    var pageViewController = new PageViewController(),
+        postViewController = new UI.SplitViewController(),
+        postListViewController = new PostListViewController(),
         composeViewController = new ComposeViewController(),
-        navigationViewController = new UI.NavigationViewController();
+        navigationViewController = new UI.NavigationViewController(),
+        tabBarViewController = new UI.TabBarViewController();
     
-    navigationViewController.setRootViewController(documentListViewController);
-
-    //set split screen widths
+    //Setup Article List View Controllers
+    navigationViewController.setRootViewController(postListViewController);
     navigationViewController.view.width = '280px';
-    composeViewController.view.width = '-webkit-calc(100% - 280px)';
+    postViewController.setLeftViewController(navigationViewController);
+    postViewController.setRightViewController(composeViewController);
     
-    rootViewController.setLeftViewController(navigationViewController);
-    rootViewController.setRightViewController(composeViewController);
+    
+    //Setup TabBar View Controllers
+    tabBarViewController.tabBar.backgroundColor = '#1D2029';
+    tabBarViewController.tabBar.textColor = '#FFFFFF';
+    pageViewController.title = 'Pages';
+    tabBarViewController.addViewController(pageViewController);
+    postViewController.title = 'Posts';
+    tabBarViewController.addViewController(postViewController);
+    
+    this.setRootViewController(tabBarViewController);
+    
+    this.themeButton = new UI.Button();
+    this.themeButton.backgroundColor = '#50CCB2';
+    this.themeButton.width = '100px';
+    this.themeButton.titleLabel.text = 'Themes';
+    this.themeButton.type = 'rounded';
+    this.themeButton.textColor = '#fff';
+    tabBarViewController.tabBar.appendChild(this.themeButton);
 
-    this.setRootViewController(rootViewController);
 };
-
 
 module.exports = app;

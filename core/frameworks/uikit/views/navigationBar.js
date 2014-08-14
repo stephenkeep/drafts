@@ -3,16 +3,15 @@ var util = require('util'),
     View = require(root + 'views/view'),
     Label = require(root + 'views/label');
 
-var _initStyle = function (self) {
-    self.element.style.outline = '1px solid rgba(0,0,0,0.1)';
-    self.element.style.maxHeight = '48px';
-    self.element.style.position = 'relative';
-    self.element.style.zIndex = '1000';
+var element = function () {
+    
+    var el = document.createElement('ui-navigationbar');
+    return el;
 };
 
 function NavigationBar() {
     View.apply(this, arguments);
-    _initStyle(this);
+    this.element = element();
     
     this.height = '48px';
 

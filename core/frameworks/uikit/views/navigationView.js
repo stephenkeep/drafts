@@ -5,8 +5,8 @@ var util = require('util'),
 //Private Methods
 var element = function () {
     
-    var el = document.createElement('section');
-    el.className = 'navigationView';
+    var el = document.createElement('ui-navigationview');
+
     return el;
 };
 

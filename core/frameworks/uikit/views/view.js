@@ -1,14 +1,14 @@
 //Private Methods
 var element = function () {
     
-    var el = document.createElement('div');
-    el.className = 'view';
+    var el = document.createElement('ui-view');
     return el;
 };
 
 //Public Methods
 function View() {
     this.element = element();
+    
     this.name = 'view';
     
     var width,
@@ -22,6 +22,7 @@ function View() {
         },
         set: function(newValue) {
            width = newValue;
+           this.element.style.maxWidth = newValue;
            this.element.style.width = newValue;
         }
     });
@@ -57,13 +58,18 @@ function View() {
     });
 }
 
+View.prototype.empty = function () {
+    
+    while (this.element.hasChildNodes()) {
+        this.element.removeChild(this.element.firstChild);
+    }
+    
+};
+
 View.prototype.appendChild = function (child) {
     
     this.element.appendChild(child.element);
     
-    if (child.parentViewController && child.parentViewController.viewDidLoad) {
-        child.parentViewController.viewDidLoad();    
-    }
 };
 
 module.exports = View;

@@ -6,7 +6,7 @@ var util = require('util'),
 function ScrollViewController() {
     ViewController.apply(this, arguments); 
     this.view = new ScrollView();
-    this.view.parentViewController = this;
+    this.parentViewController = this;
 }
 
 util.inherits(ScrollViewController, ViewController);

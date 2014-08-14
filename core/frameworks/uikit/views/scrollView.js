@@ -5,10 +5,8 @@ var util = require('util'),
 //Private Methods
 var element = function () {
     
-    var el = document.createElement('div');
-    el.className = 'scrollView';
+    var el = document.createElement('ui-scrollview');
     el.style.overflowY = 'scroll';
-    el.style.flex = '1';
     return el;
 };
 

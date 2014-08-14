@@ -3,6 +3,7 @@ var App = function () {
 };
 
 App.prototype.appWillFinishLaunching = function () {
+
     this.appDidFinishLauncing();
 };
 

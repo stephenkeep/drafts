@@ -3,9 +3,12 @@ var util = require('util'),
     View = require(root + 'views/view.js'),
     Label = require(root + 'views/label.js');
 
-var _initStyle = function (self) {
-    self.element.style.position = 'relative';
-    self.element.style.pointerEvents = 'fill';
+var element = function () {
+    
+    var el = document.createElement('ui-collectioncell');
+    el.style.position = 'relative';
+    el.style.pointerEvents = 'fill';
+    return el;
 };
 
 function blendColors(c0, c1, p) {
@@ -15,8 +18,7 @@ function blendColors(c0, c1, p) {
 
 function CollectionCell() {
     View.apply(this, arguments);
-    _initStyle(this);
-    
+    this.element = element();
     var self = this;
     
     this.titleLabel = new Label();
@@ -61,7 +63,14 @@ function CollectionCell() {
         set: function(newValue) {
            selected = newValue;
            if (selected) {
-                self.backgroundColor = blendColors(_backgroundColor, '#000000', 0.2);
+               if (!_backgroundColor) {
+                   _backgroundColor = self.backgroundColor;
+               }
+               if (this.selectedBackgroundColor) {
+                   self.backgroundColor = this.selectedBackgroundColor;
+               } else {
+                   self.backgroundColor = blendColors(_backgroundColor, '#000000', 0.2);
+               }
             } else {
                 self.backgroundColor = _backgroundColor;
             }

@@ -2,13 +2,16 @@ var util = require('util'),
     root = __base + 'core/frameworks/uikit/',
     View = require(root + 'views/view.js');
 
-var _initStyle = function (self) {
-    self.element.style.backgroundColor = 'transparent';
-    self.element.style.display = 'block';
-    self.element.style.pointerEvents = 'none';
-    self.element.style.position = 'absolute';
-    self.element.style.top = '0';
-    self.element.style.left = '0';
+var element = function () {
+    
+    var el = document.createElement('ui-label');
+    el.style.backgroundColor = 'transparent';
+    el.style.display = 'block';
+    el.style.pointerEvents = 'none';
+    el.style.position = 'absolute';
+    el.style.top = '0';
+    el.style.left = '0';
+    return el;
 };
 
 var _text = function () {
@@ -24,7 +27,7 @@ var _text = function () {
 
 function Label() {
     View.apply(this, arguments);
-    _initStyle(this);
+    this.element = element();
     
     this.textElement = _text();
     this.element.appendChild(this.textElement);
@@ -34,6 +37,7 @@ function Label() {
         text,
         textColor,
         textAlign,
+        fontSize,
         numberOfLines,
         textVerticalAlign = null;
     
@@ -85,6 +89,16 @@ function Label() {
         set: function(newValue) {
            textAlign = newValue;
            this.textElement.style.textAlign = newValue;
+        }
+    });
+    
+    Object.defineProperty(this, 'fontSize', {
+        get: function() {
+          return fontSize;
+        },
+        set: function(newValue) {
+           fontSize = newValue;
+           this.textElement.style.fontSize = newValue;
         }
     });
     

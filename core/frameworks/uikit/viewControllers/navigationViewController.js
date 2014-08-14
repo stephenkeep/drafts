@@ -21,6 +21,11 @@ NavigationViewController.prototype.setRootViewController = function (viewControl
     this.rootViewController.view.appendChild(this.rootViewController.navigationBar);
     
     this.view.appendChild(this.rootViewController.view);
+    
+    this.rootViewController.parentViewController = this;
+    if (this.rootViewController.viewDidLoad) {
+        this.rootViewController.viewDidLoad();    
+    }
 };
 
 module.exports = NavigationViewController;
