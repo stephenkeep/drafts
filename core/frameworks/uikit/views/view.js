@@ -8,6 +8,7 @@ var element = function () {
 //Public Methods
 function View() {
     this.element = element();
+    this.element.parentView = this;
     
     this.name = 'view';
     
@@ -60,15 +61,23 @@ function View() {
 
 View.prototype.empty = function () {
     
-    while (this.element.hasChildNodes()) {
-        this.element.removeChild(this.element.firstChild);
-    }
+//    while (this.element.hasChildNodes()) {
+//        this.element.removeChild(this.element.firstChild);
+//    }
+    
+    this.element.textContent = '';
     
 };
 
 View.prototype.appendChild = function (child) {
     
     this.element.appendChild(child.element);
+    
+};
+
+View.prototype.replaceChild = function (replacement, child) {
+    
+    this.element.replaceChild(replacement.element, child.element);
     
 };
 

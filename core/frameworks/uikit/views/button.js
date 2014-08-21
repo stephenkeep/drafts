@@ -22,33 +22,42 @@ function BarButton() {
     this.element = element();
     
     this.content = new View();
+    this.content.backgroundColor = 'transparent';
     this.appendChild(this.content);
+    
+    this.iconLabel = new Label();
+    this.iconLabel.textElement.style.font = 'font-family: "icons"';
+    this.iconLabel.textElement.style.fontSize = '17px';
+    this.iconLabel.textAlign = 'center';
+    this.iconLabel.textVerticalAlign = 'center';
+    this.content.appendChild(this.iconLabel);
 
     this.titleLabel = new Label();
-    this.titleLabel.textElement.style.font = 'font-family: "icons"';
-    this.titleLabel.textElement.style.fontSize = '17px';
+    this.titleLabel.textElement.style.lineHeight = '40px';
     this.titleLabel.textAlign = 'center';
     this.titleLabel.textVerticalAlign = 'center';
     this.content.appendChild(this.titleLabel);
     
     //CUSTOM MOUSE EVENTS
+    var _backgroundColor = this.backgroundColor,
+        _iconColor = self.iconColor || self.textColor;
     this.element.onmouseover = function () {
-        var _backgroundColor = self.backgroundColor,
-            _iconColor = self.iconColor;
-        self.backgroundColor = _iconColor;
-        self.iconColor = _backgroundColor;
+        
+        self.content.backgroundColor = _iconColor;
+        self.titleLabel.textColor = _backgroundColor;
+        self.iconLabel.textColor = _backgroundColor;
     };
     this.element.onmouseout = function () {
-        var _backgroundColor = self.backgroundColor,
-            _iconColor = self.iconColor;
-        self.backgroundColor = _iconColor;
-        self.iconColor = _backgroundColor;
+
+        self.content.backgroundColor = _backgroundColor;
+        self.titleLabel.textColor = _iconColor;
+        self.iconLabel.textColor = _iconColor;
     };
     
     //CUSTOM PROPERTIES
     var onClick,
         icon,
-        iconColor,
+        text,
         textColor,
         type;
     
@@ -59,6 +68,7 @@ function BarButton() {
         set: function(newValue) {
             type = newValue;
             if (type === 'rounded') {
+                _backgroundColor =  this.backgroundColor;
                 this.content.backgroundColor = this.backgroundColor;
                 this.content.height = '-webkit-calc(100% - 10px)';
                 this.content.element.style.borderRadius = '3px';
@@ -83,18 +93,22 @@ function BarButton() {
           return icon;
         },
         set: function(newValue) {
-           icon = newValue;
-           this.titleLabel.textElement.className = 'icon-' + newValue;
+            icon = newValue;
+            this.iconLabel.textElement.className = 'icon-' + newValue;
+            this.iconLabel.element.style.top = '-1px';
+            this.titleLabel.width = '-webkit-calc(100% - 38px)';
+            this.titleLabel.element.style.left = '32px'; 
         }
     });
     
-    Object.defineProperty(this, 'iconColor', {
+    Object.defineProperty(this, 'text', {
         get: function() {
-          return iconColor;
+          return text;
         },
         set: function(newValue) {
-           iconColor = newValue;
-           this.titleLabel.textColor = newValue;
+            text = newValue;
+            this.titleLabel.text = newValue;
+            this.iconLabel.width = '44px';
         }
     });
     
@@ -103,8 +117,9 @@ function BarButton() {
           return textColor;
         },
         set: function(newValue) {
-           textColor = newValue;
-           this.titleLabel.textColor = newValue;
+            _iconColor = newValue;
+            textColor = newValue;
+            this.titleLabel.textColor = newValue;
         }
     });
 }

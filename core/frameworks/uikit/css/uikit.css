@@ -15,6 +15,10 @@ ui-tabbar, ui-tabview, ui-tabbarbutton {
     display: block;
 }
 
+ui-scrollview {
+    -webkit-overflow-scrolling: touch;
+}
+
 ::-webkit-scrollbar {
     width: 7px;
 }

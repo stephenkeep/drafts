@@ -20,12 +20,8 @@ function CollectionCell() {
     View.apply(this, arguments);
     this.element = element();
     var self = this;
+    self.backgroundColor = '#FFF';
     
-    this.titleLabel = new Label();
-    this.titleLabel.textAlign = 'center';
-    this.titleLabel.textVerticalAlign = 'middle';
-    this.appendChild(this.titleLabel);
-
     //CUSTOM MOUSE EVENTS
    var _backgroundColor;
     this.element.onmouseover = function () {

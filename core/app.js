@@ -1,9 +1,10 @@
 var App = function () {
+    window.app = this;
     this.view = document.body;
+    
 };
 
 App.prototype.appWillFinishLaunching = function () {
-
     this.appDidFinishLauncing();
 };
 

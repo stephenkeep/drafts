@@ -5,7 +5,7 @@
 }
 
 [class^="icon-"], [class*=" icon-"] {
-	font-family: 'icons';
+	font-family: 'icons', 'montserrat';
 	speak: none;
 	font-style: normal;
 	font-weight: normal;
@@ -455,6 +455,7 @@
 }
 .icon-compose:before {
   content: "\e6a4";
+    
 }
 .icon-compass:before {
   content: "\e6a5";

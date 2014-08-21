@@ -1,6 +1,7 @@
 var util = require('util'),
     App = require(__base + 'core/app'),
     UI = require(__base + 'core/frameworks/uikit'),
+    SiteViewController = require(__base + 'app/viewControllers/sites/siteViewController'),
     PageViewController = require(__base + 'app/viewControllers/pages/pageViewController'),
     PostListViewController = require(__base + 'app/viewControllers/posts/postListViewController'),
     ComposeViewController = require(__base + 'app/viewControllers/posts/composeViewController');
@@ -14,37 +15,43 @@ util.inherits(app, App);
 app.prototype.appDidFinishLauncing = function () {
     console.log('applicationDidFinishLaunching');
     
-    var pageViewController = new PageViewController(),
+    var siteViewController = new SiteViewController(),
+        pageViewController = new PageViewController(),
         postViewController = new UI.SplitViewController(),
         postListViewController = new PostListViewController(),
         composeViewController = new ComposeViewController(),
-        navigationViewController = new UI.NavigationViewController(),
         tabBarViewController = new UI.TabBarViewController();
     
     //Setup Article List View Controllers
-    navigationViewController.setRootViewController(postListViewController);
-    navigationViewController.view.width = '280px';
-    postViewController.setLeftViewController(navigationViewController);
+    postListViewController.view.width = '280px';
+    postViewController.setLeftViewController(postListViewController);
     postViewController.setRightViewController(composeViewController);
-    
     
     //Setup TabBar View Controllers
     tabBarViewController.tabBar.backgroundColor = '#1D2029';
     tabBarViewController.tabBar.textColor = '#FFFFFF';
-    pageViewController.title = 'Pages';
-    tabBarViewController.addViewController(pageViewController);
     postViewController.title = 'Posts';
     tabBarViewController.addViewController(postViewController);
+    pageViewController.title = 'Pages';
+    tabBarViewController.addViewController(pageViewController);
+    siteViewController.title = 'Sites';
+    tabBarViewController.addViewController(siteViewController);
     
     this.setRootViewController(tabBarViewController);
     
     this.themeButton = new UI.Button();
     this.themeButton.backgroundColor = '#50CCB2';
-    this.themeButton.width = '100px';
-    this.themeButton.titleLabel.text = 'Themes';
+    this.themeButton.width = '118px';
+    this.themeButton.text = 'New Post';
+    this.themeButton.titleLabel.fontSize = '13px';
     this.themeButton.type = 'rounded';
-    this.themeButton.textColor = '#fff';
+    this.themeButton.icon = 'compose';
+    this.themeButton.textColor = '#286357';
+    this.themeButton.element.style.position = 'absolute';
+    this.themeButton.element.style.right = '8px';
     tabBarViewController.tabBar.appendChild(this.themeButton);
+    
+    this.themeButton.onClick = postListViewController.rightBarButtonClicked.bind(postListViewController);
 
 };
 

@@ -1,7 +1,8 @@
 var UI = require(__base + 'core/frameworks/uikit'),
     PostCell = require(__base + 'app/views/posts/postCell'),
     ManagedObjectController = require(__base + 'app/data/controllers/managedObjectController'),
-    Post = require(__base + 'app/data/models/post');
+    Post = require(__base + 'app/data/models/post'),
+    NewPostViewController = require(__base + 'app/viewControllers/posts/newPostViewController');
 
 function PostListViewController() {
     UI.ViewController.apply(this, arguments);
@@ -22,18 +23,9 @@ UI.inherits(PostListViewController, UI.ViewController);
 
 PostListViewController.prototype.viewDidLoad = function () {
     
-    this.navigationBar.backgroundColor = '#393b43';
-    
-    //Right Bar Button
-    this.rightBarButton = new UI.BarButton();
-    this.rightBarButton.backgroundColor = '#393b43';
-    this.rightBarButton.onClick = this.rightBarButtonClicked.bind(this);
-    this.rightBarButton.icon = 'add2';
-    this.rightBarButton.iconColor = '#50CCB2';
-    this.navigationBar.rightBarButton = this.rightBarButton;
-   
     //Setup Collection View to store Documents
     this.documentCVC = new UI.CollectionViewController();
+    this.documentCVC.cellHeight = '88px';
     this.documentCVC.view.backgroundColor = '#393b43';
     this.documentCVC.delegate = this;
     this.view.appendChild(this.documentCVC.view);
@@ -41,11 +33,20 @@ PostListViewController.prototype.viewDidLoad = function () {
 
 PostListViewController.prototype.rightBarButtonClicked = function () {
 
-    var post = new Post();
-    post.title = 'Untitled';
-    post.createdAt = new Date();
-    post.modifiedAt = new Date();
-    this.moc.addObject('Post', post);
+//    var post = new Post();
+//    post.title = 'Untitled';
+//    post.createdAt = new Date();
+//    post.modifiedAt = new Date();
+//    this.moc.addObject('Post', post);
+    
+    var newPostViewController = new NewPostViewController(),
+        navigationController = new UI.NavigationViewController(),
+        modalViewController = new UI.ModalViewController();
+    
+    navigationController.setRootViewController(newPostViewController);
+    modalViewController.setRootViewController(navigationController);
+    
+    this.presentModalViewController(modalViewController);
 };
 
 /*
@@ -56,8 +57,7 @@ PostListViewController.prototype.cellForIndex = function (cvc, index) {
     var post = this.posts[index];
     
     var cell = new PostCell();
-    cell.height = '88px';
-    cell.title.text = post.title;
+    cell.title.text = post.title + ': ' + index;
     if (index === this.selected) {
         cell.selected = true;    
     }
@@ -75,9 +75,6 @@ PostListViewController.prototype.didPressCellAtIndex = function (cvc, cell, inde
 PostListViewController.prototype.objectAdded = function (moc, type, object) {
     
     this.posts.unshift(object);
-    
-    console.log(object);
-    console.log(this.posts.length);
     
     this.documentCVC.rows = this.posts.length;
     this.documentCVC.loadData();

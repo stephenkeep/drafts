@@ -22,6 +22,7 @@ var ViewController = require(root + 'viewControllers/viewController'),
     SplitViewController = require(root + 'viewControllers/splitViewController'),
     CollectionViewController = require(root + 'viewControllers/collectionViewController'),
     NavigationViewController = require(root + 'viewControllers/navigationViewController'),
+    ModalViewController = require(root + 'viewControllers/modalViewController'),
     TabBarViewController = require(root + 'viewControllers/tabBarViewController'),
     PopOverViewController = require(root + 'viewControllers/popOverViewController');
 
@@ -42,6 +43,7 @@ module.exports = {
     SplitViewController: SplitViewController,
     CollectionViewController: CollectionViewController,
     NavigationViewController: NavigationViewController,
+    ModalViewController: ModalViewController,
     TabBarViewController: TabBarViewController,
     PopOverViewController: PopOverViewController
 };
