@@ -1,16 +1,24 @@
 {
-  "main": "index.html",
-  "name": "skeep",
-  "nodejs": true,
-  "window": {
-    "toolbar": true,
-    "frame": true,
-    "width": 1048,
-    "height": 700,
-    "position": "mouse",
-    "min_width": 800,
-    "min_height": 600,
-    "max_width": 8000,
-    "max_height": 8000
-  }
+  "name": "drafts",
+  "version": "0.0.0",
+  "description": "",
+  "main": "main.js",
+  "dependencies": {
+    "document-register-element": "^0.1.0",
+    "fastclick": "^1.0.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stephenkeep/drafts.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/stephenkeep/drafts/issues"
+  },
+  "homepage": "https://github.com/stephenkeep/drafts"
 }

@@ -1,7 +1,6 @@
 var util = require('util'),
-    root = __base + 'core/frameworks/uikit/',
-    ViewController = require(root + 'viewControllers/viewController'),
-    ScrollView = require(root + 'views/scrollView');
+    ViewController = require('./viewController'),
+    ScrollView = require('../views/scrollView');
 
 function ScrollViewController() {
     var self = this;

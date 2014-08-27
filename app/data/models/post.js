@@ -1,4 +1,4 @@
-var DATA = require(__base + 'core/frameworks/data');
+var DATA = require('core/frameworks/data');
 
 //Public Methods
 function Post() {

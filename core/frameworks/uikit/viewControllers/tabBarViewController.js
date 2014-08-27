@@ -1,10 +1,9 @@
 var util = require('util'),
-    root = __base + 'core/frameworks/uikit/',
-    ViewController = require(root + 'viewControllers/viewController'),
-    View = require(root + 'views/view'),
-    TabView = require(root + 'views/tabView'),
-    TabBar = require(root + 'views/tabBar'),
-    TabBarButton = require(root + 'views/tabBarButton');
+    ViewController = require('./viewController'),
+    View = require('../views/view'),
+    TabView = require('../views/tabView'),
+    TabBar = require('../views/tabBar'),
+    TabBarButton = require('../views/tabBarButton');
 
 function TabBarViewController() {
     ViewController.apply(this, arguments);

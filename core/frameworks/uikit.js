@@ -1,12 +1,10 @@
-var root = __base + 'core/frameworks/uikit/';
-   
-var View = require(root + 'views/view'),
-    ScrollView = require(root + 'views/scrollView'),
-    BarButton = require(root + 'views/barButton'),
-    Label = require(root + 'views/label'),
-    NavigationBar = require(root + 'views/navigationBar'),
-    CollectionCell = require(root + 'views/collectionCell'),
-    Button = require(root + 'views/button');
+var View = require('./uikit/views/view'),
+    ScrollView = require('./uikit/views/scrollView'),
+    BarButton = require('./uikit/views/barButton'),
+    Label = require('./uikit/views/label'),
+    NavigationBar = require('./uikit/views/navigationBar'),
+    CollectionCell = require('./uikit/views/collectionCell'),
+    Button = require('./uikit/views/button');
 
     document.registerElement('ui-view');
     document.registerElement('ui-scrollview');
@@ -17,14 +15,14 @@ var View = require(root + 'views/view'),
     document.registerElement('ui-navigationbar');
     document.registerElement('ui-navigationview');
 
-var ViewController = require(root + 'viewControllers/viewController'),
-    ScrollViewController = require(root + 'viewControllers/scrollViewController'),
-    SplitViewController = require(root + 'viewControllers/splitViewController'),
-    CollectionViewController = require(root + 'viewControllers/collectionViewController'),
-    NavigationViewController = require(root + 'viewControllers/navigationViewController'),
-    ModalViewController = require(root + 'viewControllers/modalViewController'),
-    TabBarViewController = require(root + 'viewControllers/tabBarViewController'),
-    PopOverViewController = require(root + 'viewControllers/popOverViewController');
+var ViewController = require('./uikit/viewControllers/viewController'),
+    ScrollViewController = require('./uikit/viewControllers/scrollViewController'),
+    SplitViewController = require('./uikit/viewControllers/splitViewController'),
+    CollectionViewController = require('./uikit/viewControllers/collectionViewController'),
+    NavigationViewController = require('./uikit/viewControllers/navigationViewController'),
+    ModalViewController = require('./uikit/viewControllers/modalViewController'),
+    TabBarViewController = require('./uikit/viewControllers/tabBarViewController'),
+    PopOverViewController = require('./uikit/viewControllers/popOverViewController');
 
 module.exports = {
 	name: 'uikit',

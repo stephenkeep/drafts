@@ -1,7 +1,6 @@
 var util = require('util'),
-    root = __base + 'core/frameworks/uikit/',
-    ViewController = require(root + 'viewControllers/viewController'),
-    View = require(root + 'views/view');
+    ViewController = require('./viewController'),
+    View = require('../views/view');
 
 function PopOverViewController() {
     ViewController.apply(this, arguments); 

@@ -1,4 +1,4 @@
-var UI = require(__base + 'core/frameworks/uikit');
+var UI = require('core/frameworks/uikit');
 
 function SiteViewController() {
     UI.ViewController.apply(this, arguments);

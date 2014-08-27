@@ -1,8 +1,7 @@
 var util = require('util'),
-    root = __base + 'core/frameworks/uikit/',
-    View = require(root + 'views/view.js'),
-    ViewController = require(root + 'viewControllers/viewController.js'),
-    ScrollViewController = require(root + 'viewControllers/scrollViewController.js');
+    View = require('core/frameworks/uikit/views/view.js'),
+    ViewController = require('./viewController.js'),
+    ScrollViewController = require('./scrollViewController.js');
 
 function CollectionViewController() {
     ViewController.apply(this, arguments);
@@ -31,8 +30,6 @@ function CollectionViewController() {
         
         self.scrollViewController.view.empty();
         
-        
-
         for (var i = 0, l = this.rows; i < l; i++) {
             
             var container = new View();

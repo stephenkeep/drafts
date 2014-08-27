@@ -23,6 +23,7 @@ function View() {
         },
         set: function(newValue) {
            width = newValue;
+           this.element.style.minWidth = newValue;
            this.element.style.maxWidth = newValue;
            this.element.style.width = newValue;
         }

@@ -1,6 +1,5 @@
 var util = require('util'),
-    root = __base + 'core/frameworks/uikit/',
-    View = require(root + 'views/view.js');
+    View = require('./view.js');
 
 var element = function () {
     

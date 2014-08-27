@@ -1,9 +1,8 @@
-var UI = require(__base + 'core/frameworks/uikit');
+var UI = require('core/frameworks/uikit');
 
 function NewPostViewController() {
     UI.ViewController.apply(this, arguments);
    
-    this.view.parentViewController = this;
     this.view.backgroundColor = 'red';
     this.view.height = '288px';
     this.view.width = '288px';

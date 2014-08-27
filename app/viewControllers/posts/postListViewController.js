@@ -1,8 +1,8 @@
-var UI = require(__base + 'core/frameworks/uikit'),
-    PostCell = require(__base + 'app/views/posts/postCell'),
-    ManagedObjectController = require(__base + 'app/data/controllers/managedObjectController'),
-    Post = require(__base + 'app/data/models/post'),
-    NewPostViewController = require(__base + 'app/viewControllers/posts/newPostViewController');
+var UI = require('core/frameworks/uikit'),
+    PostCell = require('app/views/posts/postCell'),
+    ManagedObjectController = require('app/data/controllers/managedObjectController'),
+    Post = require('app/data/models/post'),
+    NewPostViewController = require('./newPostViewController');
 
 function PostListViewController() {
     UI.ViewController.apply(this, arguments);
@@ -33,20 +33,20 @@ PostListViewController.prototype.viewDidLoad = function () {
 
 PostListViewController.prototype.rightBarButtonClicked = function () {
 
-//    var post = new Post();
-//    post.title = 'Untitled';
-//    post.createdAt = new Date();
-//    post.modifiedAt = new Date();
-//    this.moc.addObject('Post', post);
+    var post = new Post();
+    post.title = 'Untitled';
+    post.createdAt = new Date();
+    post.modifiedAt = new Date();
+    this.moc.addObject('Post', post);
     
-    var newPostViewController = new NewPostViewController(),
-        navigationController = new UI.NavigationViewController(),
-        modalViewController = new UI.ModalViewController();
-    
-    navigationController.setRootViewController(newPostViewController);
-    modalViewController.setRootViewController(navigationController);
-    
-    this.presentModalViewController(modalViewController);
+//    var newPostViewController = new NewPostViewController(),
+//        navigationController = new UI.NavigationViewController(),
+//        modalViewController = new UI.ModalViewController();
+//    
+//    navigationController.setRootViewController(newPostViewController);
+//    modalViewController.setRootViewController(navigationController);
+//    
+//    this.presentModalViewController(modalViewController);
 };
 
 /*

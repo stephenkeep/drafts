@@ -1,10 +1,9 @@
 var util = require('util'),
-    root = __base + 'core/frameworks/uikit/',
-    ViewController = require(root + 'viewControllers/viewController.js');
+    ViewController = require('./viewController.js');
 
 function SplitViewController() {
     ViewController.apply(this, arguments); 
-    this.view.element.style.display = 'flex';
+    this.view.element.style.display = '-webkit-flex';
 }
 
 util.inherits(SplitViewController, ViewController);

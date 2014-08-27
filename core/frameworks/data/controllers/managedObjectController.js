@@ -29,7 +29,7 @@ ManagedObjectController.prototype.addObject = function (type, object) {
     
     this.objects[type].push(object);
     
-    Object.observe(object, this.observer.bind(this));
+    //Object.observe(object, this.observer.bind(this));
     
     if (this.delegate && this.delegate.objectAdded) {
         this.delegate.objectAdded(this, type, object);
@@ -42,7 +42,7 @@ ManagedObjectController.prototype.removeObject = function (type, object) {
     
     if (index > -1) {
         
-        Object.unobserve(object, this.observer);
+        //Object.unobserve(object, this.observer);
         
         this.objects[type].splice(index, 1);
         

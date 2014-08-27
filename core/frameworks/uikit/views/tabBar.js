@@ -1,10 +1,9 @@
 var util = require('util'),
-    root = __base + 'core/frameworks/uikit/',
-    View = require(root + 'views/view');
+    View = require('./view');
 
 var element = function () {
     var el = document.createElement('ui-tabbar');
-    el.style.display = 'flex';
+    el.style.display = '-webkit-flex';
     return el;
 };
 

@@ -1,5 +1,4 @@
-var root = __base + 'core/frameworks/uikit/',
-    View = require(root + 'views/view.js');
+var View = require('../views/view.js');
 
 function ViewController() {
     this.name = 'viewController';

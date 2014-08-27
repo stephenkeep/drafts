@@ -1,9 +1,7 @@
-var root = __base + 'core/frameworks/data/';
+var ManagedObjectModel = require('./data/models/managedObjectModel');
 
-var ManagedObjectModel = require(root + 'models/managedObjectModel');
-
-var ManagedObjectController = require(root + 'controllers/managedObjectController'),
-    PersistantStorageController = require(root + 'controllers/persistantStorageController');
+var ManagedObjectController = require('./data/controllers/managedObjectController'),
+    PersistantStorageController = require('./data/controllers/persistantStorageController');
 
 module.exports = {
 	name: 'uikit',

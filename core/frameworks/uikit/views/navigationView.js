@@ -1,6 +1,5 @@
 var util = require('util'),
-    root = __base + 'core/frameworks/uikit/',
-    View = require(root + 'views/view');
+    View = require('./view');
 
 //Private Methods
 var element = function () {
@@ -14,6 +13,7 @@ var element = function () {
 function NavigationView() {
     View.apply(this, arguments);
     this.element = element();
+    this.element.parentView = this;
     this.name = 'navigationView';
     
 }

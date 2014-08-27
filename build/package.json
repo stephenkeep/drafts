@@ -1,0 +1,17 @@
+{
+  "main": "index.html",
+  "name": "skeep",
+  "nodejs": false,
+  "window": {
+    "toolbar": true,
+    "frame": true,
+    "width": 1048,
+    "height": 700,
+    "position": "mouse",
+    "min_width": 800,
+    "min_height": 600,
+    "max_width": 8000,
+    "max_height": 8000
+  },
+  "chromium-args" : "--show-fps-counterf"
+}

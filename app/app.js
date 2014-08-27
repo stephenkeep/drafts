@@ -1,10 +1,10 @@
 var util = require('util'),
-    App = require(__base + 'core/app'),
-    UI = require(__base + 'core/frameworks/uikit'),
-    SiteViewController = require(__base + 'app/viewControllers/sites/siteViewController'),
-    PageViewController = require(__base + 'app/viewControllers/pages/pageViewController'),
-    PostListViewController = require(__base + 'app/viewControllers/posts/postListViewController'),
-    ComposeViewController = require(__base + 'app/viewControllers/posts/composeViewController');
+    App = require('core/app'),
+    UI = require('core/frameworks/uikit'),
+    SiteViewController = require('./viewControllers/sites/siteViewController'),
+    PageViewController = require('./viewControllers/pages/pageViewController'),
+    PostListViewController = require('./viewControllers/posts/postListViewController'),
+    ComposeViewController = require('./viewControllers/posts/composeViewController');
 
 function app() {
     App.apply(this, arguments);
@@ -23,7 +23,7 @@ app.prototype.appDidFinishLauncing = function () {
         tabBarViewController = new UI.TabBarViewController();
     
     //Setup Article List View Controllers
-    postListViewController.view.width = '280px';
+    postListViewController.view.width = '320px';
     postViewController.setLeftViewController(postListViewController);
     postViewController.setRightViewController(composeViewController);
     

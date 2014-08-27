@@ -1,7 +1,6 @@
 var util = require('util'),
-    root = __base + 'core/frameworks/uikit/',
-    View = require(root + 'views/view.js'),
-    Label = require(root + 'views/label.js');
+    View = require('./view.js'),
+    Label = require('./label.js');
 
 var element = function () {
     

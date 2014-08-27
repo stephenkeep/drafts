@@ -1,6 +1,5 @@
 var util = require('util'),
-    root = __base + 'core/frameworks/uikit/',
-    View = require(root + 'views/view');
+    View = require('./view');
 
 //Private Methods
 var element = function () {

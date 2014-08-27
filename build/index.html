@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>    
+      <title>skeep</title>
+      <link rel="stylesheet" href="css/app.css" />
+      <script src="https://raw.githubusercontent.com/WebReflection/document-register-element/master/build/document-register-element.js"></script>
+  </head>
+  <body>
+      <script type="text/javascript">
+        function downloadJSAtOnload() {
+            var element = document.createElement("script");
+            element.src = "app.js";
+            document.body.appendChild(element);
+        }
+        window.addEventListener("load", downloadJSAtOnload, false);
+      </script>
+  </body>
+</html>

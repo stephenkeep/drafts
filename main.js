@@ -1,5 +1,5 @@
-global.__base = __dirname + '/';
-global.document = window.document;
+var attachFastClick = require('fastclick');
+attachFastClick(document.body);
 
 var App = require('./app/app.js'),
     app = new App();

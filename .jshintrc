@@ -1,9 +1,5 @@
 {
-	
-	"globals": {
-        "__base"    : true
-	},
- 
+	 
     "bitwise"       : true,
     "curly"         : true,
     "eqeqeq"        : true,
