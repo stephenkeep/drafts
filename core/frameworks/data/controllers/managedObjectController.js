@@ -1,6 +1,6 @@
 function ManagedObjectController() {
     this.name = 'managedObjectController';
-    this.objects = {};
+    //this.objects = {};
 }
 
 ManagedObjectController.prototype.observer = function (changes) {
@@ -23,11 +23,11 @@ ManagedObjectController.prototype.observer = function (changes) {
 
 ManagedObjectController.prototype.addObject = function (type, object) {
     
-    if (!this.objects[type]) {
-        this.objects[type] = [];
-    }
-    
-    this.objects[type].push(object);
+//    if (!this.objects[type]) {
+//        this.objects[type] = [];
+//    }
+//    
+//    this.objects[type].push(object);
     
     //Object.observe(object, this.observer.bind(this));
     

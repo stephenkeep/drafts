@@ -18,7 +18,6 @@ function BarButton() {
     this.element = element();
 
     //SETUP INHERITED PROPERTIES
-    this.float = 'left';
     this.height = '48px';
     this.width = '48px';
     

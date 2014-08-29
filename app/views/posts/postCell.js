@@ -1,9 +1,9 @@
 var UI = require('core/frameworks/uikit');
 
 //Public Methods
-function DocumentCell() {
+function PostCell() {
     UI.CollectionCell.apply(this, arguments);
-    this.name = 'documentCell';
+    this.name = 'postCell';
     
     this.backgroundColor = '#393B43';
     this.selectedBackgroundColor = '#3F424B';
@@ -17,12 +17,13 @@ function DocumentCell() {
     
     this.appendChild(this.title);
      
-    this.line = new UI.View();
-    this.line.height = '1px';   
-    this.line.backgroundColor = '#31333B';
-    this.appendChild(this.line);
+    var line = new UI.View();
+    line.height = '1px';   
+    line.backgroundColor = '#31333B';
+    this.appendChild(line);
+    line = null;
 }
 
-UI.inherits(DocumentCell, UI.CollectionCell);
+UI.inherits(PostCell, UI.CollectionCell);
 
-module.exports = DocumentCell;
+module.exports = PostCell;

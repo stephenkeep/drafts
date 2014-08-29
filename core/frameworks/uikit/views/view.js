@@ -14,7 +14,6 @@ function View() {
     
     var width,
         height,
-        float,
         backgroundColor;
     
     Object.defineProperty(this, 'width', {
@@ -39,15 +38,6 @@ function View() {
         }
     });
     
-    Object.defineProperty(this, 'float', {
-        get: function() {
-          return float;
-        },
-        set: function(newValue) {
-           float = newValue;
-           this.element.style.float = newValue;
-        }
-    });
     
     Object.defineProperty(this, 'backgroundColor', {
         get: function() {
@@ -60,14 +50,14 @@ function View() {
     });
 }
 
+View.prototype.unload = function () {
+    
+    this.element = null;
+};
+
 View.prototype.empty = function () {
     
-//    while (this.element.hasChildNodes()) {
-//        this.element.removeChild(this.element.firstChild);
-//    }
-    
     this.element.textContent = '';
-    
 };
 
 View.prototype.appendChild = function (child) {

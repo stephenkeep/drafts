@@ -39,6 +39,7 @@ PostListViewController.prototype.rightBarButtonClicked = function () {
     post.modifiedAt = new Date();
     this.moc.addObject('Post', post);
     
+    
 //    var newPostViewController = new NewPostViewController(),
 //        navigationController = new UI.NavigationViewController(),
 //        modalViewController = new UI.ModalViewController();

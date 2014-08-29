@@ -57,7 +57,7 @@ app.prototype.appDidFinishLauncing = function () {
 };
 
 module.exports = app;
-},{"./viewControllers/pages/pageViewController":2,"./viewControllers/posts/composeViewController":3,"./viewControllers/posts/postListViewController":5,"./viewControllers/sites/siteViewController":6,"core/app":38,"core/frameworks/uikit":40,"util":34}],2:[function(require,module,exports){
+},{"./viewControllers/pages/pageViewController":2,"./viewControllers/posts/composeViewController":3,"./viewControllers/posts/postListViewController":5,"./viewControllers/sites/siteViewController":6,"core/app":39,"core/frameworks/uikit":41,"util":35}],2:[function(require,module,exports){
 var UI = require('core/frameworks/uikit');
 
 function PageViewController() {
@@ -71,7 +71,7 @@ UI.inherits(PageViewController, UI.ViewController);
 
 
 module.exports = PageViewController;
-},{"core/frameworks/uikit":40}],3:[function(require,module,exports){
+},{"core/frameworks/uikit":41}],3:[function(require,module,exports){
 var UI = require('core/frameworks/uikit');
 
 function ComposeViewController() {
@@ -83,7 +83,7 @@ function ComposeViewController() {
 UI.inherits(ComposeViewController, UI.ScrollViewController);
 
 module.exports = ComposeViewController;
-},{"core/frameworks/uikit":40}],4:[function(require,module,exports){
+},{"core/frameworks/uikit":41}],4:[function(require,module,exports){
 var UI = require('core/frameworks/uikit');
 
 function NewPostViewController() {
@@ -106,7 +106,7 @@ NewPostViewController.prototype.viewDidAppear = function () {
 };
 
 module.exports = NewPostViewController;
-},{"core/frameworks/uikit":40}],5:[function(require,module,exports){
+},{"core/frameworks/uikit":41}],5:[function(require,module,exports){
 var UI = require('core/frameworks/uikit'),
     PostCell = require('app/views/posts/postCell'),
     ManagedObjectController = require('app/data/controllers/managedObjectController'),
@@ -147,6 +147,7 @@ PostListViewController.prototype.rightBarButtonClicked = function () {
     post.createdAt = new Date();
     post.modifiedAt = new Date();
     this.moc.addObject('Post', post);
+    
     
 //    var newPostViewController = new NewPostViewController(),
 //        navigationController = new UI.NavigationViewController(),
@@ -206,7 +207,7 @@ PostListViewController.prototype.objectUpdated = function (moc, type, object) {
 };
 
 module.exports = PostListViewController;
-},{"./newPostViewController":4,"app/data/controllers/managedObjectController":35,"app/data/models/post":36,"app/views/posts/postCell":37,"core/frameworks/uikit":40}],6:[function(require,module,exports){
+},{"./newPostViewController":4,"app/data/controllers/managedObjectController":36,"app/data/models/post":37,"app/views/posts/postCell":38,"core/frameworks/uikit":41}],6:[function(require,module,exports){
 var UI = require('core/frameworks/uikit');
 
 function SiteViewController() {
@@ -220,10 +221,10 @@ UI.inherits(SiteViewController, UI.ViewController);
 
 
 module.exports = SiteViewController;
-},{"core/frameworks/uikit":40}],7:[function(require,module,exports){
+},{"core/frameworks/uikit":41}],7:[function(require,module,exports){
 function ManagedObjectController() {
     this.name = 'managedObjectController';
-    this.objects = {};
+    //this.objects = {};
 }
 
 ManagedObjectController.prototype.observer = function (changes) {
@@ -246,11 +247,11 @@ ManagedObjectController.prototype.observer = function (changes) {
 
 ManagedObjectController.prototype.addObject = function (type, object) {
     
-    if (!this.objects[type]) {
-        this.objects[type] = [];
-    }
-    
-    this.objects[type].push(object);
+//    if (!this.objects[type]) {
+//        this.objects[type] = [];
+//    }
+//    
+//    this.objects[type].push(object);
     
     //Object.observe(object, this.observer.bind(this));
     
@@ -295,57 +296,66 @@ function ManagedObjectModel() {
 module.exports = ManagedObjectModel;
 },{}],10:[function(require,module,exports){
 var util = require('util'),
-    View = require('core/frameworks/uikit/views/view.js'),
     ViewController = require('./viewController.js'),
     ScrollViewController = require('./scrollViewController.js');
 
 function CollectionViewController() {
     ViewController.apply(this, arguments);
-    var self = this;
-    
+
     this.scrollViewController = new ScrollViewController();
     this.scrollViewController.delegate = this;
     this.scrollViewController.view.backgroundColor = 'transparent';
     this.view.appendChild(this.scrollViewController.view);
     
     this.rows = null;  
+    this.cells = [];
+    this.containers = [];
     
-    this.loadData = function () {
-    
-        if (!self.delegate || !self.delegate.cellForIndex) {
-            return;
-        }
-        
-        this.scrollViewController.scrollToTop();
-        this.cells = [];
-        this.containers = [];
-        this.height = this.view.element.offsetHeight;
-        this.upperIndex = 0;
-        this.cellHeight = parseInt(this.cellHeight);
-        this.lowerIndex = Math.ceil(this.height / this.cellHeight) - 1;
-        
-        self.scrollViewController.view.empty();
-        
-        for (var i = 0, l = this.rows; i < l; i++) {
-            
-            var container = new View();
-            container.empty();
-            container.index = i;
-            container.height = self.cellHeight + 'px';
-            self.scrollViewController.view.appendChild(container);
-            
-            this.containers.push(container);
-            
-            if (i <= this.lowerIndex) {
-                
-                self.cellForIndex(i);
-            } 
-        }
-    };
-    
+    this.height = 0;
+    this.upperIndex = 0;
+    this.cellHeight = 0;
+    this.lowerIndex = 0;
 }
 
 util.inherits(CollectionViewController, ViewController);
+
+CollectionViewController.prototype.loadData = function () {
+    var self = this;
+    
+    if (!this.delegate || !this.delegate.cellForIndex) {
+        return;
+    }
+
+    this.scrollViewController.scrollToTop();
+    this.height = this.view.element.offsetHeight;
+    this.upperIndex = 0;
+    this.cellHeight = parseInt(this.cellHeight);
+    this.lowerIndex = Math.ceil(this.height / this.cellHeight) - 1;
+
+    var l = this.rows - this.cells.length; 
+
+    for (var i = 0; i < l; i++) {
+        
+        var index = this.cells.length + i,
+            cell = this.delegate.cellForIndex(this, index);
+        
+        if (cell.selected) {
+            this.selectedCell = cell; 
+        }
+
+        cell.index = index;   
+        cell.height = self.cellHeight + 'px';
+        cell.onClick = this.didPressCellAtIndex.bind(this);
+        
+        this.containers.push(cell.element.childNodes[0].cloneNode(true));
+        if (index > this.lowerIndex) {
+            cell.empty();
+        }
+        
+        this.cells.push(cell);
+        self.scrollViewController.view.appendChild(cell);
+    }
+};
 
 CollectionViewController.prototype.scrollViewDidScroll = function (scrollViewController, position, direction) {
    
@@ -355,14 +365,14 @@ CollectionViewController.prototype.scrollViewDidScroll = function (scrollViewCon
     
     if (direction === 'SCROLL_DIRECTION_DOWN') {
         
-        if (upperIndex > this.upperIndex) {
+        if (upperIndex >= this.upperIndex) {
             
-            for (i = this.upperIndex; i < upperIndex; i++) {
+            for (i = this.upperIndex; i <= upperIndex; i++) {
                 this.removeCellForIndex(i);
             }
             this.upperIndex = upperIndex;
         }
-        if (lowerIndex > this.lowerIndex) {
+        if (lowerIndex >= this.lowerIndex) {
             
             for (i = this.lowerIndex + 1; i <= lowerIndex; i++) {
                 this.cellForIndex(i);     
@@ -371,7 +381,7 @@ CollectionViewController.prototype.scrollViewDidScroll = function (scrollViewCon
         }
         
     } else {
-
+        
         if (upperIndex < this.upperIndex) {
 
             var uIndex = upperIndex < 0 ? 0 : upperIndex;
@@ -390,27 +400,18 @@ CollectionViewController.prototype.scrollViewDidScroll = function (scrollViewCon
     }
 };
 
-CollectionViewController.prototype.removeCellForIndex = function (index) {
-  
-    var container = this.containers[index];
-    container.empty();
-};
-
 CollectionViewController.prototype.cellForIndex = function (index) {
   
-    var cell = this.cells[index] || this.delegate.cellForIndex(this, index),
+    var cell = this.cells[index],
         container = this.containers[index];
     
-    if (cell.selected) {
-        this.selectedCell = cell; 
-        console.log('selected: ' + index);
-    }
-    
-    cell.index = index;
-    cell.onClick = this.didPressCellAtIndex.bind(this);
-    this.cells.push(cell);
+    cell.element.appendChild(container);
+};
 
-    container.appendChild(cell);
+CollectionViewController.prototype.removeCellForIndex = function (index) {
+   
+    var cell = this.cells[index];
+    cell.empty();
 };
 
 CollectionViewController.prototype.didPressCellAtIndex = function (cell, index) {
@@ -430,7 +431,7 @@ CollectionViewController.prototype.didPressCellAtIndex = function (cell, index) 
 };
 
 module.exports = CollectionViewController;
-},{"./scrollViewController.js":14,"./viewController.js":17,"core/frameworks/uikit/views/view.js":41,"util":34}],11:[function(require,module,exports){
+},{"./scrollViewController.js":14,"./viewController.js":17,"util":35}],11:[function(require,module,exports){
 var util = require('util'),
     View = require('core/frameworks/uikit/views/view.js'),
     ViewController = require('./viewController.js');
@@ -534,7 +535,7 @@ ModalViewController.prototype.dismissModalViewController = function () {
 
 
 module.exports = ModalViewController;
-},{"./viewController.js":17,"core/frameworks/uikit/views/view.js":41,"util":34}],12:[function(require,module,exports){
+},{"./viewController.js":17,"core/frameworks/uikit/views/view.js":42,"util":35}],12:[function(require,module,exports){
 var util = require('util'),
     ViewController = require('./viewController'),
     NavigationView = require('../views/navigationView'),
@@ -584,7 +585,7 @@ NavigationViewController.prototype.viewDidAppear = function () {
 };
 
 module.exports = NavigationViewController;
-},{"../views/navigationBar":22,"../views/navigationView":23,"./viewController":17,"util":34}],13:[function(require,module,exports){
+},{"../views/navigationBar":22,"../views/navigationView":23,"./viewController":17,"util":35}],13:[function(require,module,exports){
 var util = require('util'),
     ViewController = require('./viewController'),
     View = require('../views/view');
@@ -662,36 +663,18 @@ PopOverViewController.prototype.show = function () {
 };
 
 module.exports = PopOverViewController;
-},{"../views/view":28,"./viewController":17,"util":34}],14:[function(require,module,exports){
+},{"../views/view":28,"./viewController":17,"util":35}],14:[function(require,module,exports){
 var util = require('util'),
     ViewController = require('./viewController'),
     ScrollView = require('../views/scrollView');
 
 function ScrollViewController() {
-    var self = this;
-    
     ViewController.apply(this, arguments); 
     this.view = new ScrollView();
     this.parentViewController = this;
     
     this.yposition = 0;
-    
-    this.view.element.onscroll = function() {
-        
-        var scrollTop = self.view.element.scrollTop,
-            direction = 'SCROLL_DIRECTION_DOWN';
-        
-        if (scrollTop < self.yposition) {
-            direction = 'SCROLL_DIRECTION_UP';        
-        }
-        
-        if (self.delegate && self.delegate.scrollViewDidScroll) {
-            self.yposition = scrollTop;
-            self.delegate.scrollViewDidScroll(this, self.yposition, direction);    
-        }
-
-    };
-
+    this.view.element.addEventListener('scroll', this.onScroll.bind(this), false);    
 }
 
 util.inherits(ScrollViewController, ViewController);
@@ -700,10 +683,30 @@ ScrollViewController.prototype.scrollToTop = function () {
   
     this.yposition = 0;
     this.view.element.scrollTop = 0;
+    
+    if (this.delegate && this.delegate.scrollViewDidScroll) {
+        this.delegate.scrollViewDidScroll(this, this.yposition, 'SCROLL_DIRECTION_UP');    
+    }
+};
+
+ScrollViewController.prototype.onScroll = function () {
+    var self = this;
+
+    var scrollTop = self.view.element.scrollTop,
+        direction = 'SCROLL_DIRECTION_DOWN';
+
+    if (scrollTop < self.yposition) {
+        direction = 'SCROLL_DIRECTION_UP';        
+    }
+
+    if (self.delegate && self.delegate.scrollViewDidScroll) {
+        self.yposition = scrollTop;
+        self.delegate.scrollViewDidScroll(this, self.yposition, direction);    
+    }
 };
 
 module.exports = ScrollViewController;
-},{"../views/scrollView":24,"./viewController":17,"util":34}],15:[function(require,module,exports){
+},{"../views/scrollView":24,"./viewController":17,"util":35}],15:[function(require,module,exports){
 var util = require('util'),
     ViewController = require('./viewController.js');
 
@@ -737,7 +740,7 @@ SplitViewController.prototype.setRightViewController = function (viewController)
 };
 
 module.exports = SplitViewController;
-},{"./viewController.js":17,"util":34}],16:[function(require,module,exports){
+},{"./viewController.js":17,"util":35}],16:[function(require,module,exports){
 var util = require('util'),
     ViewController = require('./viewController'),
     View = require('../views/view'),
@@ -829,7 +832,7 @@ TabBarViewController.prototype.didPressTabBarButton = function (tabBarButton) {
 };
 
 module.exports = TabBarViewController;
-},{"../views/tabBar":25,"../views/tabBarButton":26,"../views/tabView":27,"../views/view":28,"./viewController":17,"util":34}],17:[function(require,module,exports){
+},{"../views/tabBar":25,"../views/tabBarButton":26,"../views/tabView":27,"../views/view":28,"./viewController":17,"util":35}],17:[function(require,module,exports){
 var View = require('../views/view.js');
 
 function ViewController() {
@@ -871,7 +874,6 @@ function BarButton() {
     this.element = element();
 
     //SETUP INHERITED PROPERTIES
-    this.float = 'left';
     this.height = '48px';
     this.width = '48px';
     
@@ -934,7 +936,7 @@ function BarButton() {
 util.inherits(BarButton, View);
 
 module.exports = BarButton;
-},{"./label":21,"./view":28,"util":34}],19:[function(require,module,exports){
+},{"./label":21,"./view":28,"util":35}],19:[function(require,module,exports){
 var util = require('util'),
     View = require('./view'),
     Label = require('./label');
@@ -977,18 +979,18 @@ function BarButton() {
     //CUSTOM MOUSE EVENTS
     var _backgroundColor = this.backgroundColor,
         _iconColor = self.iconColor || self.textColor;
-    this.element.onmouseover = function () {
-        
-        self.content.backgroundColor = _iconColor;
-        self.titleLabel.textColor = _backgroundColor;
-        self.iconLabel.textColor = _backgroundColor;
-    };
-    this.element.onmouseout = function () {
-
-        self.content.backgroundColor = _backgroundColor;
-        self.titleLabel.textColor = _iconColor;
-        self.iconLabel.textColor = _iconColor;
-    };
+//    this.element.onmouseover = function () {
+//        
+//        self.content.backgroundColor = _iconColor;
+//        self.titleLabel.textColor = _backgroundColor;
+//        self.iconLabel.textColor = _backgroundColor;
+//    };
+//    this.element.onmouseout = function () {
+//
+//        self.content.backgroundColor = _backgroundColor;
+//        self.titleLabel.textColor = _iconColor;
+//        self.iconLabel.textColor = _iconColor;
+//    };
     
     //CUSTOM PROPERTIES
     var onClick,
@@ -1020,7 +1022,7 @@ function BarButton() {
         },
         set: function(newValue) {
            onClick = newValue;
-           this.element.onclick = newValue;
+           this.clickEvent = this.element.addEventListener('click', _onClick, false);  
         }
     });
     
@@ -1058,12 +1060,18 @@ function BarButton() {
             this.titleLabel.textColor = newValue;
         }
     });
+    
+    //PRIVATE METHODS
+    var _onClick = function () {
+        
+        onClick(self);        
+    };
 }
 
 util.inherits(BarButton, View);
 
 module.exports = BarButton;
-},{"./label":21,"./view":28,"util":34}],20:[function(require,module,exports){
+},{"./label":21,"./view":28,"util":35}],20:[function(require,module,exports){
 var util = require('util'),
     View = require('./view.js'),
     Label = require('./label.js');
@@ -1076,6 +1084,12 @@ var element = function () {
     return el;
 };
 
+var container = function () {
+    
+    var el = document.createElement('ui-collectioncellcontainer');
+    return el;
+};
+
 function blendColors(c0, c1, p) {
     var f=parseInt(c0.slice(1),16),t=parseInt(c1.slice(1),16),R1=f>>16,G1=f>>8&0x00FF,B1=f&0x0000FF,R2=t>>16,G2=t>>8&0x00FF,B2=t&0x0000FF;
     return "#"+(0x1000000+(Math.round((R2-R1)*p)+R1)*0x10000+(Math.round((G2-G1)*p)+G1)*0x100+(Math.round((B2-B1)*p)+B1)).toString(16).slice(1);
@@ -1083,25 +1097,29 @@ function blendColors(c0, c1, p) {
 
 function CollectionCell() {
     View.apply(this, arguments);
+    
     this.element = element();
+    this.container = container();
+    this.element.appendChild(this.container);
+    
     var self = this;
     self.backgroundColor = '#FFF';
     
     //CUSTOM MOUSE EVENTS
    var _backgroundColor;
-    this.element.onmouseover = function () {
-        if (!selected) {
-            if (!_backgroundColor) {
-                _backgroundColor = self.backgroundColor;
-            }
-            self.backgroundColor = blendColors(_backgroundColor, '#000000', 0.1);
-        }
-    };
-    this.element.onmouseout = function () {
-        if (!selected) {
-            self.backgroundColor = _backgroundColor;
-        }
-    };
+//    this.element.onmouseover = function () {
+//        if (!selected) {
+//            if (!_backgroundColor) {
+//                _backgroundColor = self.backgroundColor;
+//            }
+//            self.backgroundColor = blendColors(_backgroundColor, '#000000', 0.1);
+//        }
+//    };
+//    this.element.onmouseout = function () {
+//        if (!selected) {
+//            self.backgroundColor = _backgroundColor;
+//        }
+//    };
     
     //CUSTOM PROPERTIES
     var onClick,
@@ -1112,8 +1130,8 @@ function CollectionCell() {
           return onClick;
         },
         set: function(newValue) {
-           onClick = newValue;
-           this.element.onclick = _onClick;
+            onClick = newValue;
+            this.clickEvent = this.element.addEventListener('click', _onClick, false);    
         }
     });
     
@@ -1148,9 +1166,20 @@ function CollectionCell() {
 
 util.inherits(CollectionCell, View);
 
+CollectionCell.prototype.unload = function () {
+    
+    this.element.removeEventListener(this.clickEvent);
+    this.element = null;
+};
+
+CollectionCell.prototype.appendChild = function (child) {
+    
+    this.container.appendChild(child.element);
+    
+};
 
 module.exports = CollectionCell;
-},{"./label.js":21,"./view.js":28,"util":34}],21:[function(require,module,exports){
+},{"./label.js":21,"./view.js":28,"util":35}],21:[function(require,module,exports){
 var util = require('util'),
     View = require('./view.js');
 
@@ -1279,7 +1308,7 @@ util.inherits(Label, View);
 
 
 module.exports = Label;
-},{"./view.js":28,"util":34}],22:[function(require,module,exports){
+},{"./view.js":28,"util":35}],22:[function(require,module,exports){
 var util = require('util'),
     View = require('./view'),
     Label = require('./label');
@@ -1334,7 +1363,6 @@ function NavigationBar() {
         },
         set: function(newValue) {
             rightBarButton = newValue;
-            rightBarButton.float = 'right';
             this.appendChild(rightBarButton);
         }
     });
@@ -1344,7 +1372,7 @@ util.inherits(NavigationBar, View);
 
 
 module.exports = NavigationBar;
-},{"./label":21,"./view":28,"util":34}],23:[function(require,module,exports){
+},{"./label":21,"./view":28,"util":35}],23:[function(require,module,exports){
 var util = require('util'),
     View = require('./view');
 
@@ -1368,7 +1396,7 @@ function NavigationView() {
 util.inherits(NavigationView, View);
 
 module.exports = NavigationView;
-},{"./view":28,"util":34}],24:[function(require,module,exports){
+},{"./view":28,"util":35}],24:[function(require,module,exports){
 var util = require('util'),
     View = require('./view');
 
@@ -1391,7 +1419,7 @@ function ScrollView() {
 util.inherits(ScrollView, View);
 
 module.exports = ScrollView;
-},{"./view":28,"util":34}],25:[function(require,module,exports){
+},{"./view":28,"util":35}],25:[function(require,module,exports){
 var util = require('util'),
     View = require('./view');
 
@@ -1423,7 +1451,7 @@ util.inherits(TabBar, View);
 
 
 module.exports = TabBar;
-},{"./view":28,"util":34}],26:[function(require,module,exports){
+},{"./view":28,"util":35}],26:[function(require,module,exports){
 var util = require('util'),
     View = require('./view'),
     Label = require('./label');
@@ -1523,7 +1551,7 @@ function TabBarButton() {
 util.inherits(TabBarButton, View);
 
 module.exports = TabBarButton;
-},{"./label":21,"./view":28,"util":34}],27:[function(require,module,exports){
+},{"./label":21,"./view":28,"util":35}],27:[function(require,module,exports){
 var util = require('util'),
     View = require('./view');
 
@@ -1544,7 +1572,7 @@ function TabView() {
 util.inherits(TabView, View);
 
 module.exports = TabView;
-},{"./view":28,"util":34}],28:[function(require,module,exports){
+},{"./view":28,"util":35}],28:[function(require,module,exports){
 //Private Methods
 var element = function () {
     
@@ -1561,7 +1589,6 @@ function View() {
     
     var width,
         height,
-        float,
         backgroundColor;
     
     Object.defineProperty(this, 'width', {
@@ -1586,15 +1613,6 @@ function View() {
         }
     });
     
-    Object.defineProperty(this, 'float', {
-        get: function() {
-          return float;
-        },
-        set: function(newValue) {
-           float = newValue;
-           this.element.style.float = newValue;
-        }
-    });
     
     Object.defineProperty(this, 'backgroundColor', {
         get: function() {
@@ -1607,14 +1625,14 @@ function View() {
     });
 }
 
+View.prototype.unload = function () {
+    
+    this.element = null;
+};
+
 View.prototype.empty = function () {
     
-//    while (this.element.hasChildNodes()) {
-//        this.element.removeChild(this.element.firstChild);
-//    }
-    
     this.element.textContent = '';
-    
 };
 
 View.prototype.appendChild = function (child) {
@@ -1634,11 +1652,17 @@ module.exports = View;
 var attachFastClick = require('fastclick');
 attachFastClick(document.body);
 
+//Used in to polyfil registerElement
+require('document-register-element');
+
 var App = require('./app/app.js'),
     app = new App();
 
 app.appWillFinishLaunching();
-},{"./app/app.js":1,"fastclick":30}],30:[function(require,module,exports){
+},{"./app/app.js":1,"document-register-element":30,"fastclick":31}],30:[function(require,module,exports){
+/*! (C) WebReflection Mit Style License */
+(function(e,t,n,r){"use strict";function q(e,t){for(var n=0,r=e.length;n<r;n++)J(e[n],t)}function R(e){for(var t=0,n=e.length,r;t<n;t++)r=e[t],$(r,c[z(r)])}function U(e){return function(t){g.call(L,t)&&(J(t,e),q(t.querySelectorAll(h),e))}}function z(e){var t=e.getAttribute("is");return d.call(l,t?t.toUpperCase():e.nodeName)}function W(e){var t=e.currentTarget,n=e.attrChange,r=e.prevValue,i=e.newValue;t.attributeChangedCallback&&t.attributeChangedCallback(e.attrName,n===e.ADDITION?null:r,n===e.REMOVAL?null:i)}function X(e){var t=U(e);return function(e){t(e.target)}}function V(e,t){var n=this;O.call(n,e,t),B.call(n,{target:n})}function $(e,t){N(e,t),I?I.observe(e,_):(H&&(e.setAttribute=V,e[i]=F(e),e.addEventListener(u,B)),e.addEventListener(o,W)),e.createdCallback&&(e.created=!0,e.createdCallback(),e.created=!1)}function J(e,t){var n,r=z(e),i="attached",s="detached";-1<r&&(C(e,c[r]),r=0,t===i&&!e[i]?(e[s]=!1,e[i]=!0,r=1):t===s&&!e[s]&&(e[i]=!1,e[s]=!0,r=1),r&&(n=e[t+"Callback"])&&n.call(e))}if(r in t)return;var i="__"+r+(Math.random()*1e5>>0),s="extends",o="DOMAttrModified",u="DOMSubtreeModified",a=/^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+$/,f=["ANNOTATION-XML","COLOR-PROFILE","FONT-FACE","FONT-FACE-SRC","FONT-FACE-URI","FONT-FACE-FORMAT","FONT-FACE-NAME","MISSING-GLYPH"],l=[],c=[],h="",p=t.documentElement,d=l.indexOf||function(e){for(var t=this.length;t--&&this[t]!==e;);return t},v=n.prototype,m=v.hasOwnProperty,g=v.isPrototypeOf,y=n.defineProperty,b=n.getOwnPropertyDescriptor,w=n.getOwnPropertyNames,E=n.getPrototypeOf,S=n.setPrototypeOf,x=!!n.__proto__,T=n.create||function K(e){return e?(K.prototype=e,new K):this},N=S||(x?function(e,t){return e.__proto__=t,e}:b?function(){function e(e,t){for(var n,r=w(t),i=0,s=r.length;i<s;i++)n=r[i],m.call(e,n)||y(e,n,b(t,n))}return function(t,n){do e(t,n);while(n=E(n));return t}}():function(e,t){for(var n in t)e[n]=t[n];return e}),C=S||x?function(e,t){g.call(t,e)||$(e,t)}:function(e,t){e[i]||(e[i]=n(!0),$(e,t))},k=e.MutationObserver||e.WebKitMutationObserver,L=(e.HTMLElement||e.Element||e.Node).prototype,A=L.cloneNode,O=L.setAttribute,M=t.createElement,_=k&&{attributes:!0,characterData:!0,attributeOldValue:!0},D=k||function(e){H=!1,p.removeEventListener(o,D)},P=!1,H=!0,B,j,F,I;k||(p.addEventListener(o,D),p.setAttribute(i,1),p.removeAttribute(i),H&&(B=function(e){var t=this,n,r,s;if(t===e.target){n=t[i],t[i]=r=F(t);for(s in r){if(!(s in n))return j(0,t,s,n[s],r[s],"ADDITION");if(r[s]!==n[s])return j(1,t,s,n[s],r[s],"MODIFICATION")}for(s in n)if(!(s in r))return j(2,t,s,n[s],r[s],"REMOVAL")}},j=function(e,t,n,r,i,s){var o={attrChange:e,currentTarget:t,attrName:n,prevValue:r,newValue:i};o[s]=e,W(o)},F=function(e){for(var t,n={},r=e.attributes,i=0,s=r.length;i<s;i++)t=r[i],n[t.name]=t.value;return n})),t[r]=function(n,r){y=n.toUpperCase(),P||(P=!0,k?(I=function(e,t){function n(e,t){for(var n=0,r=e.length;n<r;t(e[n++]));}return new k(function(r){for(var i,s,o=0,u=r.length;o<u;o++)i=r[o],i.type==="childList"?(n(i.addedNodes,e),n(i.removedNodes,t)):(s=i.target,s.attributeChangedCallback&&s.attributeChangedCallback(i.attributeName,i.oldValue,s.getAttribute(i.attributeName)))})}(U("attached"),U("detached")),I.observe(t,{childList:!0,subtree:!0})):(t.addEventListener("DOMNodeInserted",X("attached")),t.addEventListener("DOMNodeRemoved",X("detached"))),t.createElement=function(e,n){var r,i=M.apply(t,arguments);return n&&i.setAttribute("is",e=n.toLowerCase()),r=d.call(l,e.toUpperCase()),-1<r&&$(i,c[r]),i},L.cloneNode=function(e){var t=A.call(this,!!e),n=z(t);return-1<n&&$(t,c[n]),e&&R(t.querySelectorAll(h)),t});if(-1<d.call(l,y))throw new Error("A "+n+" type is already registered");if(!a.test(y)||-1<d.call(f,y))throw new Error("The type "+n+" is invalid");var i=function(){return t.createElement(p,u&&y)},o=r||v,u=m.call(o,s),p=u?r[s]:y,g=l.push(y)-1,y;return h=h.concat(h.length?",":"",u?p+'[is="'+n.toLowerCase()+'"]':p),i.prototype=c[g]=m.call(o,"prototype")?o.prototype:T(L),q(t.querySelectorAll(h),"attached"),i}})(window,document,Object,"registerElement");
+},{}],31:[function(require,module,exports){
 /**
  * @preserve FastClick: polyfill to remove click delays on browsers with touch UIs.
  *
@@ -2461,7 +2485,7 @@ if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) 
 	window.FastClick = FastClick;
 }
 
-},{}],31:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -2486,7 +2510,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],32:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -2551,14 +2575,14 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],33:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -3148,7 +3172,7 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":33,"_process":32,"inherits":31}],35:[function(require,module,exports){
+},{"./support/isBuffer":34,"_process":33,"inherits":32}],36:[function(require,module,exports){
 var DATA = require('core/frameworks/data');
 
 //Public Methods
@@ -3162,7 +3186,7 @@ function ManagedObjectController() {
 DATA.inherits(ManagedObjectController, DATA.ManagedObjectController);
 
 module.exports = ManagedObjectController;
-},{"core/frameworks/data":39}],36:[function(require,module,exports){
+},{"core/frameworks/data":40}],37:[function(require,module,exports){
 var DATA = require('core/frameworks/data');
 
 //Public Methods
@@ -3176,13 +3200,13 @@ function Post() {
 DATA.inherits(Post, DATA.ManagedObjectModel);
 
 module.exports = Post;
-},{"core/frameworks/data":39}],37:[function(require,module,exports){
+},{"core/frameworks/data":40}],38:[function(require,module,exports){
 var UI = require('core/frameworks/uikit');
 
 //Public Methods
-function DocumentCell() {
+function PostCell() {
     UI.CollectionCell.apply(this, arguments);
-    this.name = 'documentCell';
+    this.name = 'postCell';
     
     this.backgroundColor = '#393B43';
     this.selectedBackgroundColor = '#3F424B';
@@ -3196,16 +3220,17 @@ function DocumentCell() {
     
     this.appendChild(this.title);
      
-    this.line = new UI.View();
-    this.line.height = '1px';   
-    this.line.backgroundColor = '#31333B';
-    this.appendChild(this.line);
+    var line = new UI.View();
+    line.height = '1px';   
+    line.backgroundColor = '#31333B';
+    this.appendChild(line);
+    line = null;
 }
 
-UI.inherits(DocumentCell, UI.CollectionCell);
+UI.inherits(PostCell, UI.CollectionCell);
 
-module.exports = DocumentCell;
-},{"core/frameworks/uikit":40}],38:[function(require,module,exports){
+module.exports = PostCell;
+},{"core/frameworks/uikit":41}],39:[function(require,module,exports){
 var App = function () {
     window.app = this;
     this.view = document.body;
@@ -3221,7 +3246,7 @@ App.prototype.setRootViewController = function (rootViewController) {
 };
 
 module.exports = App;
-},{}],39:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 var ManagedObjectModel = require('./data/models/managedObjectModel');
 
 var ManagedObjectController = require('./data/controllers/managedObjectController'),
@@ -3236,7 +3261,7 @@ module.exports = {
     ManagedObjectController: ManagedObjectController,
     PersistantStorageController: PersistantStorageController
 };
-},{"./data/controllers/managedObjectController":7,"./data/controllers/persistantStorageController":8,"./data/models/managedObjectModel":9,"util":34}],40:[function(require,module,exports){
+},{"./data/controllers/managedObjectController":7,"./data/controllers/persistantStorageController":8,"./data/models/managedObjectModel":9,"util":35}],41:[function(require,module,exports){
 var View = require('./uikit/views/view'),
     ScrollView = require('./uikit/views/scrollView'),
     BarButton = require('./uikit/views/barButton'),
@@ -3284,6 +3309,6 @@ module.exports = {
     TabBarViewController: TabBarViewController,
     PopOverViewController: PopOverViewController
 };
-},{"./uikit/viewControllers/collectionViewController":10,"./uikit/viewControllers/modalViewController":11,"./uikit/viewControllers/navigationViewController":12,"./uikit/viewControllers/popOverViewController":13,"./uikit/viewControllers/scrollViewController":14,"./uikit/viewControllers/splitViewController":15,"./uikit/viewControllers/tabBarViewController":16,"./uikit/viewControllers/viewController":17,"./uikit/views/barButton":18,"./uikit/views/button":19,"./uikit/views/collectionCell":20,"./uikit/views/label":21,"./uikit/views/navigationBar":22,"./uikit/views/scrollView":24,"./uikit/views/view":28,"util":34}],41:[function(require,module,exports){
+},{"./uikit/viewControllers/collectionViewController":10,"./uikit/viewControllers/modalViewController":11,"./uikit/viewControllers/navigationViewController":12,"./uikit/viewControllers/popOverViewController":13,"./uikit/viewControllers/scrollViewController":14,"./uikit/viewControllers/splitViewController":15,"./uikit/viewControllers/tabBarViewController":16,"./uikit/viewControllers/viewController":17,"./uikit/views/barButton":18,"./uikit/views/button":19,"./uikit/views/collectionCell":20,"./uikit/views/label":21,"./uikit/views/navigationBar":22,"./uikit/views/scrollView":24,"./uikit/views/view":28,"util":35}],42:[function(require,module,exports){
 module.exports=require(28)
 },{}]},{},[29]);

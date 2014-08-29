@@ -1,7 +1,4 @@
 @import url("uikit.css");
-@import url(http://fonts.googleapis.com/css?family=Abril+Fatface);
-@import url(http://fonts.googleapis.com/css?family=Open+Sans);
-@import url(http://fonts.googleapis.com/css?family=Cardo:400italic);
 
 * {
     pointer-events: 'none';

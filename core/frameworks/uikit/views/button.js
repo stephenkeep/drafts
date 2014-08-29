@@ -40,18 +40,18 @@ function BarButton() {
     //CUSTOM MOUSE EVENTS
     var _backgroundColor = this.backgroundColor,
         _iconColor = self.iconColor || self.textColor;
-    this.element.onmouseover = function () {
-        
-        self.content.backgroundColor = _iconColor;
-        self.titleLabel.textColor = _backgroundColor;
-        self.iconLabel.textColor = _backgroundColor;
-    };
-    this.element.onmouseout = function () {
-
-        self.content.backgroundColor = _backgroundColor;
-        self.titleLabel.textColor = _iconColor;
-        self.iconLabel.textColor = _iconColor;
-    };
+//    this.element.onmouseover = function () {
+//        
+//        self.content.backgroundColor = _iconColor;
+//        self.titleLabel.textColor = _backgroundColor;
+//        self.iconLabel.textColor = _backgroundColor;
+//    };
+//    this.element.onmouseout = function () {
+//
+//        self.content.backgroundColor = _backgroundColor;
+//        self.titleLabel.textColor = _iconColor;
+//        self.iconLabel.textColor = _iconColor;
+//    };
     
     //CUSTOM PROPERTIES
     var onClick,
@@ -83,7 +83,7 @@ function BarButton() {
         },
         set: function(newValue) {
            onClick = newValue;
-           this.element.onclick = newValue;
+           this.clickEvent = this.element.addEventListener('click', _onClick, false);  
         }
     });
     
@@ -121,8 +121,20 @@ function BarButton() {
             this.titleLabel.textColor = newValue;
         }
     });
+    
+    //PRIVATE METHODS
+    var _onClick = function () {
+        
+        onClick(self);        
+    };
 }
 
 util.inherits(BarButton, View);
+
+BarButton.prototype.unload = function () {
+    
+    this.element.removeEventListener(this.clickEvent);
+    this.element = null;
+};
 
 module.exports = BarButton;

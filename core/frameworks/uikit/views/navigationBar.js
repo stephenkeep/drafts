@@ -52,7 +52,6 @@ function NavigationBar() {
         },
         set: function(newValue) {
             rightBarButton = newValue;
-            rightBarButton.float = 'right';
             this.appendChild(rightBarButton);
         }
     });
