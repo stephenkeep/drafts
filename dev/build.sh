@@ -8,6 +8,7 @@ EOF
 quit
 
 export NODE_PATH=.
+cd ..
 browserify main.js -o build/app.js
 cd build
 zip -r app.nw *

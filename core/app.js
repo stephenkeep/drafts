@@ -1,7 +1,5 @@
 var App = function () {
-    window.app = this;
-    this.view = document.body;
-    
+    window.iOS = /(iPad|iPhone|iPod)/g.test( navigator.userAgent );
 };
 
 App.prototype.appWillFinishLaunching = function () {
@@ -9,7 +7,7 @@ App.prototype.appWillFinishLaunching = function () {
 };
 
 App.prototype.setRootViewController = function (rootViewController) {
-    this.view.appendChild(rootViewController.view.element);
+    window.document.body.appendChild(rootViewController.view.element);
 };
 
 module.exports = App;

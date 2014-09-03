@@ -13,6 +13,7 @@ var element = function () {
 function ScrollView() {
     View.apply(this, arguments);
     this.element = element();
+    this.element.parentView = this;
     this.name = 'scrollView';
     
 }

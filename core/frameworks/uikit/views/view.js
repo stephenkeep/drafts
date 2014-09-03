@@ -14,45 +14,71 @@ function View() {
     
     var width,
         height,
-        backgroundColor;
+        backgroundColor,
+        borderColor;
     
     Object.defineProperty(this, 'width', {
         get: function() {
-          return width;
+            return width;
         },
         set: function(newValue) {
-           width = newValue;
-           this.element.style.minWidth = newValue;
-           this.element.style.maxWidth = newValue;
-           this.element.style.width = newValue;
+            width = newValue;
+            if (this.element) {
+                this.element.style.minWidth = newValue;
+                this.element.style.maxWidth = newValue;
+                this.element.style.width = newValue;
+            }
         }
     });
     
     Object.defineProperty(this, 'height', {
         get: function() {
-          return height;
+            return height;
         },
         set: function(newValue) {
-           height = newValue;
-           this.element.style.height = newValue;
+            height = newValue;
+            if (this.element) {
+                this.element.style.height = newValue;
+            }
         }
     });
     
     
     Object.defineProperty(this, 'backgroundColor', {
         get: function() {
-          return backgroundColor;
+            return backgroundColor;
         },
         set: function(newValue) {
-           backgroundColor = newValue;
-           this.element.style.backgroundColor = newValue;
+            backgroundColor = newValue;
+            if (this.element) {
+                this.element.style.backgroundColor = newValue;
+            }
+        }
+    });
+    
+    Object.defineProperty(this, 'borderColor', {
+        get: function() {
+            return borderColor;
+        },
+        set: function(newValue) {
+            borderColor = newValue;
+            if (this.element) {
+                this.element.style.outlineStyle = 'solid';
+                this.element.style.outlineColor = newValue;
+            }
         }
     });
 }
 
 View.prototype.unload = function () {
-    
+
+    this.element.parentElement.removeChild(this.element);
+    this.element.parentView = null;
     this.element = null;
+    
+    for (var prop in this) {
+        this[prop] = null;
+    }
 };
 
 View.prototype.empty = function () {

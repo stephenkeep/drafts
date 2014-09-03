@@ -22,9 +22,8 @@ function NavigationBar() {
     this.titleLabel.textVerticalAlign = 'center';
     this.appendChild(this.titleLabel);
 
-    var title,
-        leftBarButton,
-        rightBarButton;
+    var title;
+
     
     Object.defineProperty(this, 'title', {
         get: function() {
@@ -36,28 +35,39 @@ function NavigationBar() {
         }
     });
     
-    Object.defineProperty(this, 'leftBarButton', {
-        get: function() {
-          return leftBarButton;
-        },
-        set: function(newValue) {
-           leftBarButton = newValue;
-           this.appendChild(newValue);
-        }
-    });
-    
-    Object.defineProperty(this, 'rightBarButton', {
-        get: function() {
-          return rightBarButton;
-        },
-        set: function(newValue) {
-            rightBarButton = newValue;
-            this.appendChild(rightBarButton);
-        }
-    });
+//        leftBarButton,
+//        rightBarButton;
+//    Object.defineProperty(this, 'leftBarButton', {
+//        get: function() {
+//          return leftBarButton;
+//        },
+//        set: function(newValue) {
+//           leftBarButton = newValue;
+//           this.appendChild(newValue);
+//        }
+//    });
+//    
+//    Object.defineProperty(this, 'rightBarButton', {
+//        get: function() {
+//          return rightBarButton;
+//        },
+//        set: function(newValue) {
+//            rightBarButton = newValue;
+//            this.appendChild(rightBarButton);
+//        }
+//    });
 }
 
 util.inherits(NavigationBar, View);
 
+var _prototype = NavigationBar.prototype,
+    _super = NavigationBar.super_.prototype;
+
+_prototype.unload = function () {
+
+    this.titleLabel.unload();
+     
+    _super.unload.call(this); 
+};
 
 module.exports = NavigationBar;

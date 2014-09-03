@@ -6,15 +6,41 @@ function ViewController() {
     this.view.parentViewController = this;
 }
 
+ViewController.prototype.viewDidLoad = function () {
+
+};
+
+ViewController.prototype.viewWillAppear = function () {
+
+};
+
+ViewController.prototype.viewDidAppear = function () {
+
+};
+
+ViewController.prototype.viewWillDisappear = function () {
+    
+};
+
+ViewController.prototype.viewDidDisappear = function () {
+    
+};
+
+ViewController.prototype.viewDidUnload = function () {
+    
+    this.view.parentViewController = this;
+    this.view.unload();
+    this.view = null;
+    this.name = null;
+};
+
 ViewController.prototype.presentModalViewController = function (modalViewController) {
  
-    window.app.view.appendChild(modalViewController.view.element);
+    window.document.body.appendChild(modalViewController.view.element);
     
     if (modalViewController.viewDidLoad) {
         modalViewController.viewDidLoad();    
     }
 };
-
-
 
 module.exports = ViewController;

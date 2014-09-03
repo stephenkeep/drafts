@@ -5,7 +5,8 @@ var util = require('util'),
 var element = function () {
     
     var el = document.createElement('ui-navigationview');
-
+    el.style.display = '-webkit-flex';
+    el.style['-webkit-flex-direction'] = 'column';
     return el;
 };
 

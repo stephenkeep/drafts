@@ -42,12 +42,15 @@ function Label() {
     
     Object.defineProperty(this, 'top', {
         get: function() {
-          return top;
+            return top;
         },
         set: function(newValue) {
-           top = newValue;
-           this.element.style.top = newValue;
-        }
+            top = newValue;
+            if (this.element) {
+                this.element.style.top = newValue;
+            }
+        },
+        enumerable: true
     });
     
     Object.defineProperty(this, 'left', {
@@ -56,9 +59,12 @@ function Label() {
         },
         set: function(newValue) {
            left = newValue;
-           this.element.style.left = newValue;
+            if (this.element) {
+                this.element.style.left = newValue;
+            }
            this.width = '-webkit-calc(100% - ' + newValue + ' - ' + newValue + ')';
-        }
+        },
+        enumerable: true
     });
     
     Object.defineProperty(this, 'text', {
@@ -66,9 +72,12 @@ function Label() {
           return text;
         },
         set: function(newValue) {
-           text = newValue;
-           this.textElement.innerHTML = newValue;
-        }
+            text = newValue;
+            if (this.textElement) {
+                this.textElement.textContent = newValue;
+            }
+        },
+        enumerable: true
     });
     
     Object.defineProperty(this, 'textColor', {
@@ -77,8 +86,11 @@ function Label() {
         },
         set: function(newValue) {
            textColor = newValue;
-           this.textElement.style.color = newValue;
-        }
+            if (this.textElement) {
+                this.textElement.style.color = newValue;
+            }
+        },
+        enumerable: true
     });
     
     Object.defineProperty(this, 'textAlign', {
@@ -87,8 +99,11 @@ function Label() {
         },
         set: function(newValue) {
            textAlign = newValue;
-           this.textElement.style.textAlign = newValue;
-        }
+            if (this.textElement) {
+                this.textElement.style.textAlign = newValue;
+            }
+        },
+        enumerable: true
     });
     
     Object.defineProperty(this, 'fontSize', {
@@ -97,8 +112,11 @@ function Label() {
         },
         set: function(newValue) {
            fontSize = newValue;
-           this.textElement.style.fontSize = newValue;
-        }
+            if (this.textElement) {
+                this.textElement.style.fontSize = newValue;
+            }
+        },
+        enumerable: true
     });
     
     Object.defineProperty(this, 'textVerticalAlign', {
@@ -107,8 +125,11 @@ function Label() {
         },
         set: function(newValue) {
             textVerticalAlign = newValue;
-            this.textElement.style['-webkit-box-pack'] = newValue;
-        }
+            if (this.textElement) {
+                this.textElement.style['-webkit-box-pack'] = newValue;
+            }
+        },
+        enumerable: true
     });
     
     Object.defineProperty(this, 'numberOfLines', {
@@ -116,13 +137,19 @@ function Label() {
           return numberOfLines;
         },
         set: function(newValue) {
-           numberOfLines = newValue;
-           this.textElement.style['-webkit-line-clamp'] = newValue;
-        }
+            numberOfLines = newValue;
+            if (this.textElement) {
+                this.textElement.style['-webkit-line-clamp'] = newValue;
+            }
+        },
+        enumerable: true
     });
 }
 
 util.inherits(Label, View);
+
+var _prototype = Label.prototype,
+    _super = Label.super_.prototype;
 
 
 module.exports = Label;

@@ -57,7 +57,9 @@ function CollectionCell() {
         },
         set: function(newValue) {
             onClick = newValue;
-            this.clickEvent = this.element.addEventListener('click', _onClick, false);    
+            if (this.element) {
+                this.clickEvent = this.element.addEventListener('click', _onClick, false);    
+            }
         }
     });
     
@@ -92,13 +94,18 @@ function CollectionCell() {
 
 util.inherits(CollectionCell, View);
 
-CollectionCell.prototype.unload = function () {
-    
+var _prototype = CollectionCell.prototype,
+    _super = CollectionCell.super_.prototype;
+
+_prototype.unload = function () {
+
+    this.container.unload();
     this.element.removeEventListener(this.clickEvent);
-    this.element = null;
+     
+    _super.unload.call(this); 
 };
 
-CollectionCell.prototype.appendChild = function (child) {
+_prototype.appendChild = function (child) {
     
     this.container.appendChild(child.element);
     

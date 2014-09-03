@@ -36,10 +36,12 @@ CollectionViewController.prototype.loadData = function () {
     this.lowerIndex = Math.ceil(this.height / this.cellHeight) - 1;
 
     var l = this.rows - this.cells.length; 
+    
+    var initialCellCount = this.cells.length;
 
     for (var i = 0; i < l; i++) {
-        
-        var index = this.cells.length + i,
+
+        var index = initialCellCount + i,
             cell = this.delegate.cellForIndex(this, index);
         
         if (cell.selected) {
@@ -48,6 +50,7 @@ CollectionViewController.prototype.loadData = function () {
 
         cell.index = index;   
         cell.height = self.cellHeight + 'px';
+        
         cell.onClick = this.didPressCellAtIndex.bind(this);
         
         this.containers.push(cell.element.childNodes[0].cloneNode(true));
@@ -105,16 +108,21 @@ CollectionViewController.prototype.scrollViewDidScroll = function (scrollViewCon
 
 CollectionViewController.prototype.cellForIndex = function (index) {
   
-    var cell = this.cells[index],
-        container = this.containers[index];
+    if (index < this.cells.length) {
+        var cell = this.cells[index],
+            container = this.containers[index];
     
-    cell.element.appendChild(container);
+        cell.element.appendChild(container);
+    }
+
 };
 
 CollectionViewController.prototype.removeCellForIndex = function (index) {
    
-    var cell = this.cells[index];
-    cell.empty();
+    if (index < this.cells.length) {
+        var cell = this.cells[index];
+        cell.empty();
+    }
 };
 
 CollectionViewController.prototype.didPressCellAtIndex = function (cell, index) {

@@ -13,6 +13,7 @@ ui-tabbar, ui-tabview, ui-tabbarbutton {
     position: relative;
     outline: none;
     display: block;
+    outline-width: 1px;
 }
 
 ui-scrollview {
