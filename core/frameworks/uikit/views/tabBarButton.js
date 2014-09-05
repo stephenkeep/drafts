@@ -62,7 +62,8 @@ function TabBarButton() {
         set: function(newValue) {
            text = newValue;
            this.titleLabel.text = newValue;
-        }
+        },
+        enumerable: true
     });
     
     Object.defineProperty(this, 'textColor', {
@@ -72,7 +73,8 @@ function TabBarButton() {
         set: function(newValue) {
            textColor = newValue;
            this.titleLabel.textColor = newValue;
-        }
+        },
+        enumerable: true
     });
     
     Object.defineProperty(this, 'selected', {
@@ -90,7 +92,8 @@ function TabBarButton() {
             } else {
                this.titleLabel.textColor = blendColors(textColor, '#000000', 0.4);
             }
-        }
+        },
+        enumerable: true
     });
 }
 

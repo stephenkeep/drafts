@@ -17,10 +17,11 @@ function ActivityCell() {
     
     this.appendChild(this.title);
      
-    var line = new UI.View();
-    line.height = '1px';   
-    line.backgroundColor = '#ededed';
-    this.appendChild(line);
+    this.line = new UI.View();
+    this.line.height = '1px';   
+    this.line.backgroundColor = '#ededed';
+    this.appendChild(this.line);
+
 }
 
 UI.inherits(ActivityCell, UI.CollectionCell);
@@ -28,12 +29,14 @@ UI.inherits(ActivityCell, UI.CollectionCell);
 var _prototype = ActivityCell.prototype,
     _super = ActivityCell.super_.prototype;
 
-_prototype.unload = function () {
+_prototype.destroy = function () {
 
-    this.line.unload();
-    this.title.unload();
+    this.line.destroy();
+    this.line = null;
+    this.title.destroy();
+    this.title = null;
 
-    _super.unload.call(this); 
+    _super.destroy.call(this); 
 };
 
 module.exports = ActivityCell;

@@ -21,4 +21,12 @@ function NavigationView() {
 
 util.inherits(NavigationView, View);
 
+var _prototype = NavigationView.prototype,
+    _super = NavigationView.super_.prototype;
+
+_prototype.destroy = function () {
+
+    _super.destroy.call(this); 
+};
+
 module.exports = NavigationView;

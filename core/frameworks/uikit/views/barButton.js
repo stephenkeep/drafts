@@ -53,7 +53,8 @@ function BarButton() {
         set: function(newValue) {
            onClick = newValue;
            this.element.onclick = newValue;
-        }
+        },
+        enumerable: true
     });
     
     Object.defineProperty(this, 'icon', {
@@ -63,7 +64,8 @@ function BarButton() {
         set: function(newValue) {
            icon = newValue;
            this.titleLabel.textElement.className = 'icon-' + newValue;
-        }
+        },
+        enumerable: true
     });
     
     Object.defineProperty(this, 'iconColor', {
@@ -73,7 +75,8 @@ function BarButton() {
         set: function(newValue) {
            iconColor = newValue;
            this.titleLabel.textColor = newValue;
-        }
+        },
+        enumerable: true
     });
 }
 

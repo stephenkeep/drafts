@@ -58,9 +58,12 @@ function CollectionCell() {
         set: function(newValue) {
             onClick = newValue;
             if (this.element) {
-                this.clickEvent = this.element.addEventListener('click', _onClick, false);    
+                this.clickEvent = this.element.addEventListener('click', function _func() {
+                    self.onClick(self, self.index);
+                }, false);
             }
-        }
+        },
+        enumerable: true
     });
     
     Object.defineProperty(this, 'selected', {
@@ -81,15 +84,10 @@ function CollectionCell() {
             } else {
                 self.backgroundColor = _backgroundColor;
             }
-        }
+        },
+        enumerable: true
     });
     
-
-    //PRIVATE METHODS
-    var _onClick = function () {
-        
-        onClick(self, self.index);        
-    };
 }
 
 util.inherits(CollectionCell, View);
@@ -97,12 +95,11 @@ util.inherits(CollectionCell, View);
 var _prototype = CollectionCell.prototype,
     _super = CollectionCell.super_.prototype;
 
-_prototype.unload = function () {
-
-    this.container.unload();
+_prototype.destroy = function () {
+    
     this.element.removeEventListener(this.clickEvent);
      
-    _super.unload.call(this); 
+    _super.destroy.call(this); 
 };
 
 _prototype.appendChild = function (child) {

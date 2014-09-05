@@ -22,7 +22,25 @@ function CollectionViewController() {
 
 util.inherits(CollectionViewController, ViewController);
 
-CollectionViewController.prototype.loadData = function () {
+var _prototype = CollectionViewController.prototype,
+    _super = CollectionViewController.super_.prototype;
+
+_prototype.viewDidUnload = function () {
+    
+    this.scrollViewController.viewDidUnload();
+    
+    this.delegate = null;
+    
+    for (var i = 0, l = this.cells.length; i < l; i++) {
+        var cell = this.cells[i];
+        cell.destroy();
+    }
+    
+    _super.viewDidUnload.call(this); 
+};
+
+
+_prototype.loadData = function () {
     var self = this;
     
     if (!this.delegate || !this.delegate.cellForIndex) {
@@ -63,7 +81,7 @@ CollectionViewController.prototype.loadData = function () {
     }
 };
 
-CollectionViewController.prototype.scrollViewDidScroll = function (scrollViewController, position, direction) {
+_prototype.scrollViewDidScroll = function (scrollViewController, position, direction) {
    
     var i = null,
         upperIndex = Math.floor(position / this.cellHeight) - 1,
@@ -106,7 +124,7 @@ CollectionViewController.prototype.scrollViewDidScroll = function (scrollViewCon
     }
 };
 
-CollectionViewController.prototype.cellForIndex = function (index) {
+_prototype.cellForIndex = function (index) {
   
     if (index < this.cells.length) {
         var cell = this.cells[index],
@@ -117,7 +135,7 @@ CollectionViewController.prototype.cellForIndex = function (index) {
 
 };
 
-CollectionViewController.prototype.removeCellForIndex = function (index) {
+_prototype.removeCellForIndex = function (index) {
    
     if (index < this.cells.length) {
         var cell = this.cells[index];
@@ -125,7 +143,7 @@ CollectionViewController.prototype.removeCellForIndex = function (index) {
     }
 };
 
-CollectionViewController.prototype.didPressCellAtIndex = function (cell, index) {
+_prototype.didPressCellAtIndex = function (cell, index) {
     
     if (this.selectedCell) {
         this.selectedCell.selected = false;

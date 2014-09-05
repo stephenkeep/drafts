@@ -27,9 +27,10 @@ app.prototype.appDidFinishLauncing = function () {
 };
 
 module.exports = app;
-},{"./viewControllers/activityListViewController":2,"core/app":30,"core/frameworks/uikit":31,"util":29}],2:[function(require,module,exports){
+},{"./viewControllers/activityListViewController":2,"core/app":31,"core/frameworks/uikit":32,"util":30}],2:[function(require,module,exports){
 var UI = require('core/frameworks/uikit'),
-    ActivityCell = require('../views/activityCell');
+    ActivityCell = require('../views/activityCell'),
+    ActivityViewController = require('./activityViewController');
 
 function ActivityListViewController() {
     UI.ViewController.apply(this, arguments);
@@ -43,10 +44,11 @@ function ActivityListViewController() {
 
 UI.inherits(ActivityListViewController, UI.ViewController);
 
-var prototype = ActivityListViewController.prototype;
+var _prototype = ActivityListViewController.prototype,
+    _super = ActivityListViewController.super_.prototype;
 
-prototype.viewDidLoad = function () {
-    
+_prototype.viewDidLoad = function () {
+    _super.viewDidLoad.call(this); 
     //Setup Collection View to store Documents
     this.documentCVC = new UI.CollectionViewController();
     this.documentCVC.cellHeight = '88px';
@@ -62,15 +64,23 @@ prototype.viewDidLoad = function () {
     }
 };
 
-prototype.viewWillAppear = function () {
+_prototype.viewWillAppear = function () {
+    _super.viewWillAppear.call(this); 
     this.documentCVC.rows = this.activities.length;
     this.documentCVC.loadData();
+};
+
+_prototype.viewDidUnload = function () {
+    
+    this.documentCVC.viewDidUnload();
+    
+    _super.viewDidUnload.call(this); 
 };
 
 /*
     Collection View Controller Delegate Methods
 */
-prototype.cellForIndex = function (cvc, index) {
+_prototype.cellForIndex = function (cvc, index) {
 
     var activity = this.activities[index];
 
@@ -79,27 +89,47 @@ prototype.cellForIndex = function (cvc, index) {
     return cell;
 };
 
-prototype.didPressCellAtIndex = function (cvc, cell, index) {
+_prototype.didPressCellAtIndex = function (cvc, cell, index) {
     this.selected = index;
-    console.log('index pressed: ' + index);
-    
-    var newPostViewController = new ActivityListViewController(),
+
+    var activityViewController = new ActivityViewController(),
         navigationController = new UI.NavigationViewController(),
         modalViewController = new UI.ModalViewController();
     
-    navigationController.setRootViewController(newPostViewController);
+    navigationController.setRootViewController(activityViewController);
     modalViewController.setRootViewController(navigationController);
     
     this.presentModalViewController(modalViewController);
     
-    newPostViewController = null;
+    activityViewController = null;
     navigationController = null;
     modalViewController = null;
 };
 
 
 module.exports = ActivityListViewController;
-},{"../views/activityCell":3,"core/frameworks/uikit":31}],3:[function(require,module,exports){
+},{"../views/activityCell":4,"./activityViewController":3,"core/frameworks/uikit":32}],3:[function(require,module,exports){
+var UI = require('core/frameworks/uikit');
+
+function ActivityViewController() {
+    UI.ViewController.apply(this, arguments);
+}
+
+UI.inherits(ActivityViewController, UI.ViewController);
+
+var _prototype = ActivityViewController.prototype,
+    _super = ActivityViewController.super_.prototype;
+
+_prototype.viewDidLoad = function () {
+    _super.viewDidLoad.call(this); 
+};
+
+_prototype.viewDidUnload = function () {
+    _super.viewDidUnload.call(this); 
+};
+
+module.exports = ActivityViewController;
+},{"core/frameworks/uikit":32}],4:[function(require,module,exports){
 var UI = require('core/frameworks/uikit');
 
 //Public Methods
@@ -119,10 +149,11 @@ function ActivityCell() {
     
     this.appendChild(this.title);
      
-    var line = new UI.View();
-    line.height = '1px';   
-    line.backgroundColor = '#ededed';
-    this.appendChild(line);
+    this.line = new UI.View();
+    this.line.height = '1px';   
+    this.line.backgroundColor = '#ededed';
+    this.appendChild(this.line);
+
 }
 
 UI.inherits(ActivityCell, UI.CollectionCell);
@@ -130,16 +161,18 @@ UI.inherits(ActivityCell, UI.CollectionCell);
 var _prototype = ActivityCell.prototype,
     _super = ActivityCell.super_.prototype;
 
-_prototype.unload = function () {
+_prototype.destroy = function () {
 
-    this.line.unload();
-    this.title.unload();
+    this.line.destroy();
+    this.line = null;
+    this.title.destroy();
+    this.title = null;
 
-    _super.unload.call(this); 
+    _super.destroy.call(this); 
 };
 
 module.exports = ActivityCell;
-},{"core/frameworks/uikit":31}],4:[function(require,module,exports){
+},{"core/frameworks/uikit":32}],5:[function(require,module,exports){
 var util = require('util'),
     ViewController = require('./viewController.js'),
     ScrollViewController = require('./scrollViewController.js');
@@ -164,7 +197,25 @@ function CollectionViewController() {
 
 util.inherits(CollectionViewController, ViewController);
 
-CollectionViewController.prototype.loadData = function () {
+var _prototype = CollectionViewController.prototype,
+    _super = CollectionViewController.super_.prototype;
+
+_prototype.viewDidUnload = function () {
+    
+    this.scrollViewController.viewDidUnload();
+    
+    this.delegate = null;
+    
+    for (var i = 0, l = this.cells.length; i < l; i++) {
+        var cell = this.cells[i];
+        cell.destroy();
+    }
+    
+    _super.viewDidUnload.call(this); 
+};
+
+
+_prototype.loadData = function () {
     var self = this;
     
     if (!this.delegate || !this.delegate.cellForIndex) {
@@ -205,7 +256,7 @@ CollectionViewController.prototype.loadData = function () {
     }
 };
 
-CollectionViewController.prototype.scrollViewDidScroll = function (scrollViewController, position, direction) {
+_prototype.scrollViewDidScroll = function (scrollViewController, position, direction) {
    
     var i = null,
         upperIndex = Math.floor(position / this.cellHeight) - 1,
@@ -248,7 +299,7 @@ CollectionViewController.prototype.scrollViewDidScroll = function (scrollViewCon
     }
 };
 
-CollectionViewController.prototype.cellForIndex = function (index) {
+_prototype.cellForIndex = function (index) {
   
     if (index < this.cells.length) {
         var cell = this.cells[index],
@@ -259,7 +310,7 @@ CollectionViewController.prototype.cellForIndex = function (index) {
 
 };
 
-CollectionViewController.prototype.removeCellForIndex = function (index) {
+_prototype.removeCellForIndex = function (index) {
    
     if (index < this.cells.length) {
         var cell = this.cells[index];
@@ -267,7 +318,7 @@ CollectionViewController.prototype.removeCellForIndex = function (index) {
     }
 };
 
-CollectionViewController.prototype.didPressCellAtIndex = function (cell, index) {
+_prototype.didPressCellAtIndex = function (cell, index) {
     
     if (this.selectedCell) {
         this.selectedCell.selected = false;
@@ -284,7 +335,7 @@ CollectionViewController.prototype.didPressCellAtIndex = function (cell, index) 
 };
 
 module.exports = CollectionViewController;
-},{"./scrollViewController.js":8,"./viewController.js":11,"util":29}],5:[function(require,module,exports){
+},{"./scrollViewController.js":9,"./viewController.js":12,"util":30}],6:[function(require,module,exports){
 var util = require('util'),
     View = require('core/frameworks/uikit/views/view.js'),
     ViewController = require('./viewController.js');
@@ -300,10 +351,8 @@ function ModalViewController() {
     this.view.element.style.left = '0px';
     this.view.element.style.pointerEvents = 'fill';
     
-    this.viewEvent = this.view.element.addEventListener('click', function _func(e) {
+    this.viewEvent = this.view.element.addEventListener('click', function _func() {
         //if (e.target === self.view.element) {
-            self.view.element.removeEventListener(self.viewEvent);
-            self.viewEvent = null;
             self.dismissModalViewController();
         //}
     }, false);
@@ -389,8 +438,15 @@ _prototype.viewDidDisappear = function () {
 };
 
 _prototype.viewDidUnload = function () {
-    _super.viewDidUnload.call(this); 
     
+    this.container.destroy();
+    
+    this.view.element.style.zIndex = null;
+    this.view.element.style.position = null;
+    this.view.element.style.top = null;
+    this.view.element.style.left = null;
+    this.view.element.style.pointerEvents = null;
+
     if (this.viewEvent) {
         this.view.element.removeEventListener(this.viewEvent);
         this.viewEvent = null;
@@ -404,9 +460,9 @@ _prototype.viewDidUnload = function () {
     if (this.rootViewController && this.rootViewController.viewDidUnload) {
         this.rootViewController.viewDidUnload();    
     }
-
-    this.rootViewController.parentViewController = null;
     this.rootViewController = null;
+    
+    _super.viewDidUnload.call(this); 
 };
 
 _prototype.setRootViewController = function (viewController) {
@@ -436,7 +492,7 @@ _prototype.dismissModalViewController = function () {
 
 
 module.exports = ModalViewController;
-},{"./viewController.js":11,"core/frameworks/uikit/views/view.js":32,"util":29}],6:[function(require,module,exports){
+},{"./viewController.js":12,"core/frameworks/uikit/views/view.js":33,"util":30}],7:[function(require,module,exports){
 var util = require('util'),
     View = require('core/frameworks/uikit/views/view.js'),
     ViewController = require('./viewController'),
@@ -444,10 +500,11 @@ var util = require('util'),
     NavigationBar = require('../views/navigationBar');
 
 function NavigationViewController() {
-    ViewController.apply(this, arguments); 
-    this.view = new NavigationView();
-    this.view.parentViewController = this;
     
+    this.view = new NavigationView();
+    
+    ViewController.apply(this, arguments); 
+
     this.currentViewController = null;
     
     if (window.iOS) {
@@ -474,7 +531,10 @@ function NavigationViewController() {
 
 util.inherits(NavigationViewController, ViewController);
 
-NavigationViewController.prototype.viewMutated = function(mutations) {
+var _prototype = NavigationViewController.prototype,
+    _super = NavigationViewController.super_.prototype;
+
+_prototype.viewMutated = function(mutations) {
     
     var self = this;
 
@@ -497,6 +557,7 @@ NavigationViewController.prototype.viewMutated = function(mutations) {
                     viewController.viewDidAppear();    
                 }
             }
+            viewController = null;
             
             self.observer.disconnect();
             self.observer = null;
@@ -504,7 +565,7 @@ NavigationViewController.prototype.viewMutated = function(mutations) {
     });    
 };
 
-NavigationViewController.prototype.setRootViewController = function (viewController) {
+_prototype.setRootViewController = function (viewController) {
         
     this.rootViewController = viewController;
     this.rootViewController.view.element.style.position = 'absolute';
@@ -514,57 +575,77 @@ NavigationViewController.prototype.setRootViewController = function (viewControl
     
     this.currentViewController = this.rootViewController;
     
-    this.rootViewController.parentViewController = this;
     if (this.rootViewController.viewDidLoad) {
         this.rootViewController.viewDidLoad();    
     }
 };
 
-NavigationViewController.prototype.viewWillAppear = function () {
-
+_prototype.viewWillAppear = function () {
+    _super.viewWillAppear.call(this);
     if (this.currentViewController && this.currentViewController.viewWillAppear) {
         this.currentViewController.viewWillAppear();    
     }
 };
 
-NavigationViewController.prototype.viewDidAppear = function () {
-
+_prototype.viewDidAppear = function () {
+    _super.viewDidAppear.call(this);
     if (this.currentViewController && this.currentViewController.viewDidAppear) {
         this.currentViewController.viewDidAppear();    
     }
 };
 
-NavigationViewController.prototype.viewDidDisappear = function () {
-    
+_prototype.viewDidDisappear = function () {
+    _super.viewDidDisappear.call(this);
     if (this.currentViewController && this.currentViewController.viewDidDisappear) {
         this.currentViewController.viewDidDisappear();    
     }
 
 };
 
-NavigationViewController.prototype.viewDidUnload = function () {
-    NavigationViewController.super_.prototype.viewDidUnload.call(this); 
+_prototype.viewDidUnload = function () {
     
-    if (this.currentViewController && this.currentViewController.viewDidUnload) {
-        this.currentViewController.viewDidUnload();  
+    if (this.rootViewController === this.currentViewController) {
+        
+        if (this.rootViewController.viewDidUnload) {
+            this.rootViewController.viewDidUnload();  
+            this.rootViewController = null;
+            this.currentViewController = null;
+        }
+        
+    } else {
+        
+        if (this.rootViewController.viewDidUnload) {
+            this.rootViewController.viewDidUnload();  
+            this.rootViewController = null;
+        }
+        
+        if (this.currentViewController.viewDidUnload) {
+            this.currentViewController.viewDidUnload();  
+            this.currentViewController = null;
+        }
     }
     
-    this.currentViewController = null;
-    this.rootViewController = null;
     
-    this.navigationBar.unload();
+    this.navigationBar.destroy();
     this.navigationBar = null;
-    this.controllerView.unload();
+    this.controllerView.destroy();
     this.controllerView = null;
 
-    if (window.iOS) {
-        this.statusBar.unload();
+    if (this.statusBar) {
+        this.statusBar.destroy();
         this.statusBar = null;
     }
+    
+    if (this.observer) {
+        this.observer.disconnect();
+        this.observer = null;    
+    }
+    
+    _super.viewDidUnload.call(this); 
 };
 
 module.exports = NavigationViewController;
-},{"../views/navigationBar":16,"../views/navigationView":17,"./viewController":11,"core/frameworks/uikit/views/view.js":32,"util":29}],7:[function(require,module,exports){
+},{"../views/navigationBar":17,"../views/navigationView":18,"./viewController":12,"core/frameworks/uikit/views/view.js":33,"util":30}],8:[function(require,module,exports){
 var util = require('util'),
     ViewController = require('./viewController'),
     View = require('../views/view');
@@ -642,23 +723,54 @@ PopOverViewController.prototype.show = function () {
 };
 
 module.exports = PopOverViewController;
-},{"../views/view":22,"./viewController":11,"util":29}],8:[function(require,module,exports){
+},{"../views/view":23,"./viewController":12,"util":30}],9:[function(require,module,exports){
 var util = require('util'),
     ViewController = require('./viewController'),
     ScrollView = require('../views/scrollView');
 
 function ScrollViewController() {
-    ViewController.apply(this, arguments); 
-    this.view = new ScrollView();
-    this.parentViewController = this;
     
-    this.yposition = 0;
-    this.view.element.addEventListener('scroll', this.onScroll.bind(this), false);    
+    this.view = new ScrollView();
+    
+    ViewController.apply(this, arguments); 
+    
+    var self = this;
+    
+    self.yposition = 0;
+    self.scrollEvent = self.view.element.addEventListener('scroll', function () {
+
+        var scrollTop = self.view.element.scrollTop,
+            direction = 'SCROLL_DIRECTION_DOWN';
+
+        if (scrollTop < self.yposition) {
+            direction = 'SCROLL_DIRECTION_UP';        
+        }
+
+        if (self.delegate && self.delegate.scrollViewDidScroll) {
+            self.yposition = scrollTop;
+            self.delegate.scrollViewDidScroll(this, self.yposition, direction);    
+        }
+    }, false);
 }
 
 util.inherits(ScrollViewController, ViewController);
 
-ScrollViewController.prototype.scrollToTop = function () {
+var _prototype = ScrollViewController.prototype,
+    _super = ScrollViewController.super_.prototype;
+
+_prototype.viewDidUnload = function () {
+     
+    if (this.scrollEvent) {
+        this.view.element.removeEventListener(this.scrollEvent);
+        this.scrollEvent = null;
+    }
+    
+    this.delegate = null;
+    
+    _super.viewDidUnload.call(this);
+};
+
+_prototype.scrollToTop = function () {
   
     this.yposition = 0;
     this.view.element.scrollTop = 0;
@@ -668,24 +780,8 @@ ScrollViewController.prototype.scrollToTop = function () {
     }
 };
 
-ScrollViewController.prototype.onScroll = function () {
-    var self = this;
-
-    var scrollTop = self.view.element.scrollTop,
-        direction = 'SCROLL_DIRECTION_DOWN';
-
-    if (scrollTop < self.yposition) {
-        direction = 'SCROLL_DIRECTION_UP';        
-    }
-
-    if (self.delegate && self.delegate.scrollViewDidScroll) {
-        self.yposition = scrollTop;
-        self.delegate.scrollViewDidScroll(this, self.yposition, direction);    
-    }
-};
-
 module.exports = ScrollViewController;
-},{"../views/scrollView":18,"./viewController":11,"util":29}],9:[function(require,module,exports){
+},{"../views/scrollView":19,"./viewController":12,"util":30}],10:[function(require,module,exports){
 var util = require('util'),
     ViewController = require('./viewController.js');
 
@@ -719,7 +815,7 @@ SplitViewController.prototype.setRightViewController = function (viewController)
 };
 
 module.exports = SplitViewController;
-},{"./viewController.js":11,"util":29}],10:[function(require,module,exports){
+},{"./viewController.js":12,"util":30}],11:[function(require,module,exports){
 var util = require('util'),
     ViewController = require('./viewController'),
     View = require('../views/view'),
@@ -811,12 +907,14 @@ TabBarViewController.prototype.didPressTabBarButton = function (tabBarButton) {
 };
 
 module.exports = TabBarViewController;
-},{"../views/tabBar":19,"../views/tabBarButton":20,"../views/tabView":21,"../views/view":22,"./viewController":11,"util":29}],11:[function(require,module,exports){
+},{"../views/tabBar":20,"../views/tabBarButton":21,"../views/tabView":22,"../views/view":23,"./viewController":12,"util":30}],12:[function(require,module,exports){
 var View = require('../views/view.js');
 
 function ViewController() {
     this.name = 'viewController';
-    this.view = new View();
+    if (!this.view) {
+        this.view = new View();  
+    }
     this.view.parentViewController = this;
 }
 
@@ -842,10 +940,14 @@ ViewController.prototype.viewDidDisappear = function () {
 
 ViewController.prototype.viewDidUnload = function () {
     
-    this.view.parentViewController = this;
-    this.view.unload();
-    this.view = null;
-    this.name = null;
+    this.parentViewController = null;
+    this.view.parentViewController = null;
+    this.view.destroy();
+
+//    for (var prop in this) {
+//        console.log(prop);
+//        this[prop] = null;
+//    }
 };
 
 ViewController.prototype.presentModalViewController = function (modalViewController) {
@@ -858,7 +960,7 @@ ViewController.prototype.presentModalViewController = function (modalViewControl
 };
 
 module.exports = ViewController;
-},{"../views/view.js":22}],12:[function(require,module,exports){
+},{"../views/view.js":23}],13:[function(require,module,exports){
 var util = require('util'),
     View = require('./view'),
     Label = require('./label');
@@ -914,7 +1016,8 @@ function BarButton() {
         set: function(newValue) {
            onClick = newValue;
            this.element.onclick = newValue;
-        }
+        },
+        enumerable: true
     });
     
     Object.defineProperty(this, 'icon', {
@@ -924,7 +1027,8 @@ function BarButton() {
         set: function(newValue) {
            icon = newValue;
            this.titleLabel.textElement.className = 'icon-' + newValue;
-        }
+        },
+        enumerable: true
     });
     
     Object.defineProperty(this, 'iconColor', {
@@ -934,14 +1038,15 @@ function BarButton() {
         set: function(newValue) {
            iconColor = newValue;
            this.titleLabel.textColor = newValue;
-        }
+        },
+        enumerable: true
     });
 }
 
 util.inherits(BarButton, View);
 
 module.exports = BarButton;
-},{"./label":15,"./view":22,"util":29}],13:[function(require,module,exports){
+},{"./label":16,"./view":23,"util":30}],14:[function(require,module,exports){
 var util = require('util'),
     View = require('./view'),
     Label = require('./label');
@@ -1018,7 +1123,8 @@ function BarButton() {
                 this.element.style.marginTop = '5px';
                 this.backgroundColor = 'transparent';
             }
-        }
+        },
+        enumerable: true
     });
         
     Object.defineProperty(this, 'onClick', {
@@ -1028,7 +1134,8 @@ function BarButton() {
         set: function(newValue) {
            onClick = newValue;
            this.clickEvent = this.element.addEventListener('click', _onClick, false);  
-        }
+        },
+        enumerable: true
     });
     
     Object.defineProperty(this, 'icon', {
@@ -1041,7 +1148,8 @@ function BarButton() {
             this.iconLabel.element.style.top = '-1px';
             this.titleLabel.width = '-webkit-calc(100% - 38px)';
             this.titleLabel.element.style.left = '32px'; 
-        }
+        },
+        enumerable: true
     });
     
     Object.defineProperty(this, 'text', {
@@ -1063,7 +1171,8 @@ function BarButton() {
             _iconColor = newValue;
             textColor = newValue;
             this.titleLabel.textColor = newValue;
-        }
+        },
+        enumerable: true
     });
     
     //PRIVATE METHODS
@@ -1075,14 +1184,22 @@ function BarButton() {
 
 util.inherits(BarButton, View);
 
-BarButton.prototype.unload = function () {
+var _prototype = BarButton.prototype,
+    _super = BarButton.super_.prototype;
+
+_prototype.destroy = function () {
     
     this.element.removeEventListener(this.clickEvent);
-    this.element = null;
+    
+    this.content.destroy();
+    this.iconLabel.destroy();
+    this.titleLabel.destroy();
+    
+    _super.destroy.call(this); 
 };
 
 module.exports = BarButton;
-},{"./label":15,"./view":22,"util":29}],14:[function(require,module,exports){
+},{"./label":16,"./view":23,"util":30}],15:[function(require,module,exports){
 var util = require('util'),
     View = require('./view.js'),
     Label = require('./label.js');
@@ -1143,9 +1260,12 @@ function CollectionCell() {
         set: function(newValue) {
             onClick = newValue;
             if (this.element) {
-                this.clickEvent = this.element.addEventListener('click', _onClick, false);    
+                this.clickEvent = this.element.addEventListener('click', function _func() {
+                    self.onClick(self, self.index);
+                }, false);
             }
-        }
+        },
+        enumerable: true
     });
     
     Object.defineProperty(this, 'selected', {
@@ -1166,15 +1286,10 @@ function CollectionCell() {
             } else {
                 self.backgroundColor = _backgroundColor;
             }
-        }
+        },
+        enumerable: true
     });
     
-
-    //PRIVATE METHODS
-    var _onClick = function () {
-        
-        onClick(self, self.index);        
-    };
 }
 
 util.inherits(CollectionCell, View);
@@ -1182,12 +1297,11 @@ util.inherits(CollectionCell, View);
 var _prototype = CollectionCell.prototype,
     _super = CollectionCell.super_.prototype;
 
-_prototype.unload = function () {
-
-    this.container.unload();
+_prototype.destroy = function () {
+    
     this.element.removeEventListener(this.clickEvent);
      
-    _super.unload.call(this); 
+    _super.destroy.call(this); 
 };
 
 _prototype.appendChild = function (child) {
@@ -1197,7 +1311,7 @@ _prototype.appendChild = function (child) {
 };
 
 module.exports = CollectionCell;
-},{"./label.js":15,"./view.js":22,"util":29}],15:[function(require,module,exports){
+},{"./label.js":16,"./view.js":23,"util":30}],16:[function(require,module,exports){
 var util = require('util'),
     View = require('./view.js');
 
@@ -1353,7 +1467,7 @@ var _prototype = Label.prototype,
 
 
 module.exports = Label;
-},{"./view.js":22,"util":29}],16:[function(require,module,exports){
+},{"./view.js":23,"util":30}],17:[function(require,module,exports){
 var util = require('util'),
     View = require('./view'),
     Label = require('./label');
@@ -1387,8 +1501,11 @@ function NavigationBar() {
         },
         set: function(newValue) {
            title = newValue;
-           this.titleLabel.text = newValue;
-        }
+            if (this.titleLabel) {
+                this.titleLabel.text = newValue;
+            }
+        },
+        enumerable: true
     });
     
 //        leftBarButton,
@@ -1419,15 +1536,15 @@ util.inherits(NavigationBar, View);
 var _prototype = NavigationBar.prototype,
     _super = NavigationBar.super_.prototype;
 
-_prototype.unload = function () {
+_prototype.destroy = function () {
 
-    this.titleLabel.unload();
+    this.titleLabel.destroy();
      
-    _super.unload.call(this); 
+    _super.destroy.call(this); 
 };
 
 module.exports = NavigationBar;
-},{"./label":15,"./view":22,"util":29}],17:[function(require,module,exports){
+},{"./label":16,"./view":23,"util":30}],18:[function(require,module,exports){
 var util = require('util'),
     View = require('./view');
 
@@ -1451,8 +1568,16 @@ function NavigationView() {
 
 util.inherits(NavigationView, View);
 
+var _prototype = NavigationView.prototype,
+    _super = NavigationView.super_.prototype;
+
+_prototype.destroy = function () {
+
+    _super.destroy.call(this); 
+};
+
 module.exports = NavigationView;
-},{"./view":22,"util":29}],18:[function(require,module,exports){
+},{"./view":23,"util":30}],19:[function(require,module,exports){
 var util = require('util'),
     View = require('./view');
 
@@ -1476,7 +1601,7 @@ function ScrollView() {
 util.inherits(ScrollView, View);
 
 module.exports = ScrollView;
-},{"./view":22,"util":29}],19:[function(require,module,exports){
+},{"./view":23,"util":30}],20:[function(require,module,exports){
 var util = require('util'),
     View = require('./view');
 
@@ -1500,7 +1625,8 @@ function TabBar() {
         },
         set: function(newValue) {
            textColor = newValue;
-        }
+        },
+        enumerable: true
     });
 }
 
@@ -1508,7 +1634,7 @@ util.inherits(TabBar, View);
 
 
 module.exports = TabBar;
-},{"./view":22,"util":29}],20:[function(require,module,exports){
+},{"./view":23,"util":30}],21:[function(require,module,exports){
 var util = require('util'),
     View = require('./view'),
     Label = require('./label');
@@ -1573,7 +1699,8 @@ function TabBarButton() {
         set: function(newValue) {
            text = newValue;
            this.titleLabel.text = newValue;
-        }
+        },
+        enumerable: true
     });
     
     Object.defineProperty(this, 'textColor', {
@@ -1583,7 +1710,8 @@ function TabBarButton() {
         set: function(newValue) {
            textColor = newValue;
            this.titleLabel.textColor = newValue;
-        }
+        },
+        enumerable: true
     });
     
     Object.defineProperty(this, 'selected', {
@@ -1601,14 +1729,15 @@ function TabBarButton() {
             } else {
                this.titleLabel.textColor = blendColors(textColor, '#000000', 0.4);
             }
-        }
+        },
+        enumerable: true
     });
 }
 
 util.inherits(TabBarButton, View);
 
 module.exports = TabBarButton;
-},{"./label":15,"./view":22,"util":29}],21:[function(require,module,exports){
+},{"./label":16,"./view":23,"util":30}],22:[function(require,module,exports){
 var util = require('util'),
     View = require('./view');
 
@@ -1629,7 +1758,7 @@ function TabView() {
 util.inherits(TabView, View);
 
 module.exports = TabView;
-},{"./view":22,"util":29}],22:[function(require,module,exports){
+},{"./view":23,"util":30}],23:[function(require,module,exports){
 //Private Methods
 var element = function () {
     
@@ -1660,7 +1789,8 @@ function View() {
                 this.element.style.maxWidth = newValue;
                 this.element.style.width = newValue;
             }
-        }
+        },
+        enumerable: true
     });
     
     Object.defineProperty(this, 'height', {
@@ -1672,7 +1802,8 @@ function View() {
             if (this.element) {
                 this.element.style.height = newValue;
             }
-        }
+        },
+        enumerable: true
     });
     
     
@@ -1685,7 +1816,8 @@ function View() {
             if (this.element) {
                 this.element.style.backgroundColor = newValue;
             }
-        }
+        },
+        enumerable: true
     });
     
     Object.defineProperty(this, 'borderColor', {
@@ -1698,19 +1830,27 @@ function View() {
                 this.element.style.outlineStyle = 'solid';
                 this.element.style.outlineColor = newValue;
             }
-        }
+        },
+        enumerable: true
     });
 }
 
-View.prototype.unload = function () {
+View.prototype.destroy = function () {
 
-    this.element.parentElement.removeChild(this.element);
+//    for (var prop in this) {
+//        if (prop !== 'element') {
+//            this[prop] = null;
+//        }
+//    }
+    
+    if (this.element.parentElement) {
+        this.element.parentElement.removeChild(this.element);
+    }
+    
     this.element.parentView = null;
     this.element = null;
     
-    for (var prop in this) {
-        this[prop] = null;
-    }
+    
 };
 
 View.prototype.empty = function () {
@@ -1731,7 +1871,7 @@ View.prototype.replaceChild = function (replacement, child) {
 };
 
 module.exports = View;
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 var attachFastClick = require('fastclick');
 attachFastClick(document.body);
 
@@ -1742,10 +1882,10 @@ var App = require('./app/app.js'),
     app = new App();
 
 app.appWillFinishLaunching();
-},{"./app/app.js":1,"document-register-element":24,"fastclick":25}],24:[function(require,module,exports){
+},{"./app/app.js":1,"document-register-element":25,"fastclick":26}],25:[function(require,module,exports){
 /*! (C) WebReflection Mit Style License */
 (function(e,t,n,r){"use strict";function q(e,t){for(var n=0,r=e.length;n<r;n++)J(e[n],t)}function R(e){for(var t=0,n=e.length,r;t<n;t++)r=e[t],$(r,c[z(r)])}function U(e){return function(t){g.call(L,t)&&(J(t,e),q(t.querySelectorAll(h),e))}}function z(e){var t=e.getAttribute("is");return d.call(l,t?t.toUpperCase():e.nodeName)}function W(e){var t=e.currentTarget,n=e.attrChange,r=e.prevValue,i=e.newValue;t.attributeChangedCallback&&t.attributeChangedCallback(e.attrName,n===e.ADDITION?null:r,n===e.REMOVAL?null:i)}function X(e){var t=U(e);return function(e){t(e.target)}}function V(e,t){var n=this;O.call(n,e,t),B.call(n,{target:n})}function $(e,t){N(e,t),I?I.observe(e,_):(H&&(e.setAttribute=V,e[i]=F(e),e.addEventListener(u,B)),e.addEventListener(o,W)),e.createdCallback&&(e.created=!0,e.createdCallback(),e.created=!1)}function J(e,t){var n,r=z(e),i="attached",s="detached";-1<r&&(C(e,c[r]),r=0,t===i&&!e[i]?(e[s]=!1,e[i]=!0,r=1):t===s&&!e[s]&&(e[i]=!1,e[s]=!0,r=1),r&&(n=e[t+"Callback"])&&n.call(e))}if(r in t)return;var i="__"+r+(Math.random()*1e5>>0),s="extends",o="DOMAttrModified",u="DOMSubtreeModified",a=/^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+$/,f=["ANNOTATION-XML","COLOR-PROFILE","FONT-FACE","FONT-FACE-SRC","FONT-FACE-URI","FONT-FACE-FORMAT","FONT-FACE-NAME","MISSING-GLYPH"],l=[],c=[],h="",p=t.documentElement,d=l.indexOf||function(e){for(var t=this.length;t--&&this[t]!==e;);return t},v=n.prototype,m=v.hasOwnProperty,g=v.isPrototypeOf,y=n.defineProperty,b=n.getOwnPropertyDescriptor,w=n.getOwnPropertyNames,E=n.getPrototypeOf,S=n.setPrototypeOf,x=!!n.__proto__,T=n.create||function K(e){return e?(K.prototype=e,new K):this},N=S||(x?function(e,t){return e.__proto__=t,e}:b?function(){function e(e,t){for(var n,r=w(t),i=0,s=r.length;i<s;i++)n=r[i],m.call(e,n)||y(e,n,b(t,n))}return function(t,n){do e(t,n);while(n=E(n));return t}}():function(e,t){for(var n in t)e[n]=t[n];return e}),C=S||x?function(e,t){g.call(t,e)||$(e,t)}:function(e,t){e[i]||(e[i]=n(!0),$(e,t))},k=e.MutationObserver||e.WebKitMutationObserver,L=(e.HTMLElement||e.Element||e.Node).prototype,A=L.cloneNode,O=L.setAttribute,M=t.createElement,_=k&&{attributes:!0,characterData:!0,attributeOldValue:!0},D=k||function(e){H=!1,p.removeEventListener(o,D)},P=!1,H=!0,B,j,F,I;k||(p.addEventListener(o,D),p.setAttribute(i,1),p.removeAttribute(i),H&&(B=function(e){var t=this,n,r,s;if(t===e.target){n=t[i],t[i]=r=F(t);for(s in r){if(!(s in n))return j(0,t,s,n[s],r[s],"ADDITION");if(r[s]!==n[s])return j(1,t,s,n[s],r[s],"MODIFICATION")}for(s in n)if(!(s in r))return j(2,t,s,n[s],r[s],"REMOVAL")}},j=function(e,t,n,r,i,s){var o={attrChange:e,currentTarget:t,attrName:n,prevValue:r,newValue:i};o[s]=e,W(o)},F=function(e){for(var t,n={},r=e.attributes,i=0,s=r.length;i<s;i++)t=r[i],n[t.name]=t.value;return n})),t[r]=function(n,r){y=n.toUpperCase(),P||(P=!0,k?(I=function(e,t){function n(e,t){for(var n=0,r=e.length;n<r;t(e[n++]));}return new k(function(r){for(var i,s,o=0,u=r.length;o<u;o++)i=r[o],i.type==="childList"?(n(i.addedNodes,e),n(i.removedNodes,t)):(s=i.target,s.attributeChangedCallback&&s.attributeChangedCallback(i.attributeName,i.oldValue,s.getAttribute(i.attributeName)))})}(U("attached"),U("detached")),I.observe(t,{childList:!0,subtree:!0})):(t.addEventListener("DOMNodeInserted",X("attached")),t.addEventListener("DOMNodeRemoved",X("detached"))),t.createElement=function(e,n){var r,i=M.apply(t,arguments);return n&&i.setAttribute("is",e=n.toLowerCase()),r=d.call(l,e.toUpperCase()),-1<r&&$(i,c[r]),i},L.cloneNode=function(e){var t=A.call(this,!!e),n=z(t);return-1<n&&$(t,c[n]),e&&R(t.querySelectorAll(h)),t});if(-1<d.call(l,y))throw new Error("A "+n+" type is already registered");if(!a.test(y)||-1<d.call(f,y))throw new Error("The type "+n+" is invalid");var i=function(){return t.createElement(p,u&&y)},o=r||v,u=m.call(o,s),p=u?r[s]:y,g=l.push(y)-1,y;return h=h.concat(h.length?",":"",u?p+'[is="'+n.toLowerCase()+'"]':p),i.prototype=c[g]=m.call(o,"prototype")?o.prototype:T(L),q(t.querySelectorAll(h),"attached"),i}})(window,document,Object,"registerElement");
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 /**
  * @preserve FastClick: polyfill to remove click delays on browsers with touch UIs.
  *
@@ -2568,7 +2708,7 @@ if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) 
 	window.FastClick = FastClick;
 }
 
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -2593,7 +2733,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -2658,14 +2798,14 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],28:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -3255,7 +3395,7 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":28,"_process":27,"inherits":26}],30:[function(require,module,exports){
+},{"./support/isBuffer":29,"_process":28,"inherits":27}],31:[function(require,module,exports){
 var App = function () {
     window.iOS = /(iPad|iPhone|iPod)/g.test( navigator.userAgent );
 };
@@ -3269,7 +3409,7 @@ App.prototype.setRootViewController = function (rootViewController) {
 };
 
 module.exports = App;
-},{}],31:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 var View = require('./uikit/views/view'),
     ScrollView = require('./uikit/views/scrollView'),
     BarButton = require('./uikit/views/barButton'),
@@ -3317,6 +3457,6 @@ module.exports = {
     TabBarViewController: TabBarViewController,
     PopOverViewController: PopOverViewController
 };
-},{"./uikit/viewControllers/collectionViewController":4,"./uikit/viewControllers/modalViewController":5,"./uikit/viewControllers/navigationViewController":6,"./uikit/viewControllers/popOverViewController":7,"./uikit/viewControllers/scrollViewController":8,"./uikit/viewControllers/splitViewController":9,"./uikit/viewControllers/tabBarViewController":10,"./uikit/viewControllers/viewController":11,"./uikit/views/barButton":12,"./uikit/views/button":13,"./uikit/views/collectionCell":14,"./uikit/views/label":15,"./uikit/views/navigationBar":16,"./uikit/views/scrollView":18,"./uikit/views/view":22,"util":29}],32:[function(require,module,exports){
-module.exports=require(22)
-},{}]},{},[23]);
+},{"./uikit/viewControllers/collectionViewController":5,"./uikit/viewControllers/modalViewController":6,"./uikit/viewControllers/navigationViewController":7,"./uikit/viewControllers/popOverViewController":8,"./uikit/viewControllers/scrollViewController":9,"./uikit/viewControllers/splitViewController":10,"./uikit/viewControllers/tabBarViewController":11,"./uikit/viewControllers/viewController":12,"./uikit/views/barButton":13,"./uikit/views/button":14,"./uikit/views/collectionCell":15,"./uikit/views/label":16,"./uikit/views/navigationBar":17,"./uikit/views/scrollView":19,"./uikit/views/view":23,"util":30}],33:[function(require,module,exports){
+module.exports=require(23)
+},{}]},{},[24]);

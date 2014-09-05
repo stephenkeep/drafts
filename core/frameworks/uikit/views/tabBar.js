@@ -21,7 +21,8 @@ function TabBar() {
         },
         set: function(newValue) {
            textColor = newValue;
-        }
+        },
+        enumerable: true
     });
 }
 

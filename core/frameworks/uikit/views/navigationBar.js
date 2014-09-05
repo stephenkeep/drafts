@@ -31,8 +31,11 @@ function NavigationBar() {
         },
         set: function(newValue) {
            title = newValue;
-           this.titleLabel.text = newValue;
-        }
+            if (this.titleLabel) {
+                this.titleLabel.text = newValue;
+            }
+        },
+        enumerable: true
     });
     
 //        leftBarButton,
@@ -63,11 +66,11 @@ util.inherits(NavigationBar, View);
 var _prototype = NavigationBar.prototype,
     _super = NavigationBar.super_.prototype;
 
-_prototype.unload = function () {
+_prototype.destroy = function () {
 
-    this.titleLabel.unload();
+    this.titleLabel.destroy();
      
-    _super.unload.call(this); 
+    _super.destroy.call(this); 
 };
 
 module.exports = NavigationBar;

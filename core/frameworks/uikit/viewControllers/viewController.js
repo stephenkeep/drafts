@@ -2,7 +2,9 @@ var View = require('../views/view.js');
 
 function ViewController() {
     this.name = 'viewController';
-    this.view = new View();
+    if (!this.view) {
+        this.view = new View();  
+    }
     this.view.parentViewController = this;
 }
 
@@ -28,10 +30,14 @@ ViewController.prototype.viewDidDisappear = function () {
 
 ViewController.prototype.viewDidUnload = function () {
     
-    this.view.parentViewController = this;
-    this.view.unload();
-    this.view = null;
-    this.name = null;
+    this.parentViewController = null;
+    this.view.parentViewController = null;
+    this.view.destroy();
+
+//    for (var prop in this) {
+//        console.log(prop);
+//        this[prop] = null;
+//    }
 };
 
 ViewController.prototype.presentModalViewController = function (modalViewController) {

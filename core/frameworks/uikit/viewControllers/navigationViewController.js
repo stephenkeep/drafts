@@ -5,10 +5,11 @@ var util = require('util'),
     NavigationBar = require('../views/navigationBar');
 
 function NavigationViewController() {
-    ViewController.apply(this, arguments); 
-    this.view = new NavigationView();
-    this.view.parentViewController = this;
     
+    this.view = new NavigationView();
+    
+    ViewController.apply(this, arguments); 
+
     this.currentViewController = null;
     
     if (window.iOS) {
@@ -35,7 +36,10 @@ function NavigationViewController() {
 
 util.inherits(NavigationViewController, ViewController);
 
-NavigationViewController.prototype.viewMutated = function(mutations) {
+var _prototype = NavigationViewController.prototype,
+    _super = NavigationViewController.super_.prototype;
+
+_prototype.viewMutated = function(mutations) {
     
     var self = this;
 
@@ -58,6 +62,7 @@ NavigationViewController.prototype.viewMutated = function(mutations) {
                     viewController.viewDidAppear();    
                 }
             }
+            viewController = null;
             
             self.observer.disconnect();
             self.observer = null;
@@ -65,7 +70,7 @@ NavigationViewController.prototype.viewMutated = function(mutations) {
     });    
 };
 
-NavigationViewController.prototype.setRootViewController = function (viewController) {
+_prototype.setRootViewController = function (viewController) {
         
     this.rootViewController = viewController;
     this.rootViewController.view.element.style.position = 'absolute';
@@ -75,53 +80,73 @@ NavigationViewController.prototype.setRootViewController = function (viewControl
     
     this.currentViewController = this.rootViewController;
     
-    this.rootViewController.parentViewController = this;
     if (this.rootViewController.viewDidLoad) {
         this.rootViewController.viewDidLoad();    
     }
 };
 
-NavigationViewController.prototype.viewWillAppear = function () {
-
+_prototype.viewWillAppear = function () {
+    _super.viewWillAppear.call(this);
     if (this.currentViewController && this.currentViewController.viewWillAppear) {
         this.currentViewController.viewWillAppear();    
     }
 };
 
-NavigationViewController.prototype.viewDidAppear = function () {
-
+_prototype.viewDidAppear = function () {
+    _super.viewDidAppear.call(this);
     if (this.currentViewController && this.currentViewController.viewDidAppear) {
         this.currentViewController.viewDidAppear();    
     }
 };
 
-NavigationViewController.prototype.viewDidDisappear = function () {
-    
+_prototype.viewDidDisappear = function () {
+    _super.viewDidDisappear.call(this);
     if (this.currentViewController && this.currentViewController.viewDidDisappear) {
         this.currentViewController.viewDidDisappear();    
     }
 
 };
 
-NavigationViewController.prototype.viewDidUnload = function () {
-    NavigationViewController.super_.prototype.viewDidUnload.call(this); 
+_prototype.viewDidUnload = function () {
     
-    if (this.currentViewController && this.currentViewController.viewDidUnload) {
-        this.currentViewController.viewDidUnload();  
+    if (this.rootViewController === this.currentViewController) {
+        
+        if (this.rootViewController.viewDidUnload) {
+            this.rootViewController.viewDidUnload();  
+            this.rootViewController = null;
+            this.currentViewController = null;
+        }
+        
+    } else {
+        
+        if (this.rootViewController.viewDidUnload) {
+            this.rootViewController.viewDidUnload();  
+            this.rootViewController = null;
+        }
+        
+        if (this.currentViewController.viewDidUnload) {
+            this.currentViewController.viewDidUnload();  
+            this.currentViewController = null;
+        }
     }
     
-    this.currentViewController = null;
-    this.rootViewController = null;
     
-    this.navigationBar.unload();
+    this.navigationBar.destroy();
     this.navigationBar = null;
-    this.controllerView.unload();
+    this.controllerView.destroy();
     this.controllerView = null;
 
-    if (window.iOS) {
-        this.statusBar.unload();
+    if (this.statusBar) {
+        this.statusBar.destroy();
         this.statusBar = null;
     }
+    
+    if (this.observer) {
+        this.observer.disconnect();
+        this.observer = null;    
+    }
+    
+    _super.viewDidUnload.call(this); 
 };
 
 module.exports = NavigationViewController;

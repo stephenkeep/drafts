@@ -13,10 +13,8 @@ function ModalViewController() {
     this.view.element.style.left = '0px';
     this.view.element.style.pointerEvents = 'fill';
     
-    this.viewEvent = this.view.element.addEventListener('click', function _func(e) {
+    this.viewEvent = this.view.element.addEventListener('click', function _func() {
         //if (e.target === self.view.element) {
-            self.view.element.removeEventListener(self.viewEvent);
-            self.viewEvent = null;
             self.dismissModalViewController();
         //}
     }, false);
@@ -102,8 +100,15 @@ _prototype.viewDidDisappear = function () {
 };
 
 _prototype.viewDidUnload = function () {
-    _super.viewDidUnload.call(this); 
     
+    this.container.destroy();
+    
+    this.view.element.style.zIndex = null;
+    this.view.element.style.position = null;
+    this.view.element.style.top = null;
+    this.view.element.style.left = null;
+    this.view.element.style.pointerEvents = null;
+
     if (this.viewEvent) {
         this.view.element.removeEventListener(this.viewEvent);
         this.viewEvent = null;
@@ -117,9 +122,9 @@ _prototype.viewDidUnload = function () {
     if (this.rootViewController && this.rootViewController.viewDidUnload) {
         this.rootViewController.viewDidUnload();    
     }
-
-    this.rootViewController.parentViewController = null;
     this.rootViewController = null;
+    
+    _super.viewDidUnload.call(this); 
 };
 
 _prototype.setRootViewController = function (viewController) {

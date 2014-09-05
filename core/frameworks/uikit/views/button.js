@@ -74,7 +74,8 @@ function BarButton() {
                 this.element.style.marginTop = '5px';
                 this.backgroundColor = 'transparent';
             }
-        }
+        },
+        enumerable: true
     });
         
     Object.defineProperty(this, 'onClick', {
@@ -84,7 +85,8 @@ function BarButton() {
         set: function(newValue) {
            onClick = newValue;
            this.clickEvent = this.element.addEventListener('click', _onClick, false);  
-        }
+        },
+        enumerable: true
     });
     
     Object.defineProperty(this, 'icon', {
@@ -97,7 +99,8 @@ function BarButton() {
             this.iconLabel.element.style.top = '-1px';
             this.titleLabel.width = '-webkit-calc(100% - 38px)';
             this.titleLabel.element.style.left = '32px'; 
-        }
+        },
+        enumerable: true
     });
     
     Object.defineProperty(this, 'text', {
@@ -119,7 +122,8 @@ function BarButton() {
             _iconColor = newValue;
             textColor = newValue;
             this.titleLabel.textColor = newValue;
-        }
+        },
+        enumerable: true
     });
     
     //PRIVATE METHODS
@@ -131,10 +135,18 @@ function BarButton() {
 
 util.inherits(BarButton, View);
 
-BarButton.prototype.unload = function () {
+var _prototype = BarButton.prototype,
+    _super = BarButton.super_.prototype;
+
+_prototype.destroy = function () {
     
     this.element.removeEventListener(this.clickEvent);
-    this.element = null;
+    
+    this.content.destroy();
+    this.iconLabel.destroy();
+    this.titleLabel.destroy();
+    
+    _super.destroy.call(this); 
 };
 
 module.exports = BarButton;

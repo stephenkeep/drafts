@@ -28,7 +28,8 @@ function View() {
                 this.element.style.maxWidth = newValue;
                 this.element.style.width = newValue;
             }
-        }
+        },
+        enumerable: true
     });
     
     Object.defineProperty(this, 'height', {
@@ -40,7 +41,8 @@ function View() {
             if (this.element) {
                 this.element.style.height = newValue;
             }
-        }
+        },
+        enumerable: true
     });
     
     
@@ -53,7 +55,8 @@ function View() {
             if (this.element) {
                 this.element.style.backgroundColor = newValue;
             }
-        }
+        },
+        enumerable: true
     });
     
     Object.defineProperty(this, 'borderColor', {
@@ -66,19 +69,27 @@ function View() {
                 this.element.style.outlineStyle = 'solid';
                 this.element.style.outlineColor = newValue;
             }
-        }
+        },
+        enumerable: true
     });
 }
 
-View.prototype.unload = function () {
+View.prototype.destroy = function () {
 
-    this.element.parentElement.removeChild(this.element);
+//    for (var prop in this) {
+//        if (prop !== 'element') {
+//            this[prop] = null;
+//        }
+//    }
+    
+    if (this.element.parentElement) {
+        this.element.parentElement.removeChild(this.element);
+    }
+    
     this.element.parentView = null;
     this.element = null;
     
-    for (var prop in this) {
-        this[prop] = null;
-    }
+    
 };
 
 View.prototype.empty = function () {

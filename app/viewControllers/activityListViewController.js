@@ -1,5 +1,6 @@
 var UI = require('core/frameworks/uikit'),
-    ActivityCell = require('../views/activityCell');
+    ActivityCell = require('../views/activityCell'),
+    ActivityViewController = require('./activityViewController');
 
 function ActivityListViewController() {
     UI.ViewController.apply(this, arguments);
@@ -13,10 +14,11 @@ function ActivityListViewController() {
 
 UI.inherits(ActivityListViewController, UI.ViewController);
 
-var prototype = ActivityListViewController.prototype;
+var _prototype = ActivityListViewController.prototype,
+    _super = ActivityListViewController.super_.prototype;
 
-prototype.viewDidLoad = function () {
-    
+_prototype.viewDidLoad = function () {
+    _super.viewDidLoad.call(this); 
     //Setup Collection View to store Documents
     this.documentCVC = new UI.CollectionViewController();
     this.documentCVC.cellHeight = '88px';
@@ -32,15 +34,23 @@ prototype.viewDidLoad = function () {
     }
 };
 
-prototype.viewWillAppear = function () {
+_prototype.viewWillAppear = function () {
+    _super.viewWillAppear.call(this); 
     this.documentCVC.rows = this.activities.length;
     this.documentCVC.loadData();
+};
+
+_prototype.viewDidUnload = function () {
+    
+    this.documentCVC.viewDidUnload();
+    
+    _super.viewDidUnload.call(this); 
 };
 
 /*
     Collection View Controller Delegate Methods
 */
-prototype.cellForIndex = function (cvc, index) {
+_prototype.cellForIndex = function (cvc, index) {
 
     var activity = this.activities[index];
 
@@ -49,20 +59,19 @@ prototype.cellForIndex = function (cvc, index) {
     return cell;
 };
 
-prototype.didPressCellAtIndex = function (cvc, cell, index) {
+_prototype.didPressCellAtIndex = function (cvc, cell, index) {
     this.selected = index;
-    console.log('index pressed: ' + index);
-    
-    var newPostViewController = new ActivityListViewController(),
+
+    var activityViewController = new ActivityViewController(),
         navigationController = new UI.NavigationViewController(),
         modalViewController = new UI.ModalViewController();
     
-    navigationController.setRootViewController(newPostViewController);
+    navigationController.setRootViewController(activityViewController);
     modalViewController.setRootViewController(navigationController);
     
     this.presentModalViewController(modalViewController);
     
-    newPostViewController = null;
+    activityViewController = null;
     navigationController = null;
     modalViewController = null;
 };
